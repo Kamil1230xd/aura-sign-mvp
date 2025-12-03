@@ -66,7 +66,7 @@ jobs:
       - name: Configure Git
         run: |
           git config --global user.name "AURA Bot"
-          git config --global user.email "aura-bot@example.com"
+          git config --global user.email "aura-bot@users.noreply.github.com"
       
       - name: Create signed commit
         run: |
@@ -75,7 +75,8 @@ jobs:
           
           git add .aura-status
           
-          # Commit with sign-off
+          # Commit with sign-off (using -s for DCO compliance)
+          # Note: For GPG signing, configure GPG keys and use -S flag
           git commit -s -m "chore: AURA protection suite status update [automated]" || echo "No changes to commit"
       
       - name: Push signed commit
