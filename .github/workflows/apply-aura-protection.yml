@@ -1,0 +1,33 @@
+name: Apply AURA Protection Suite (simple, no GPG)
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Unzip protection
+        run: |
+          if [ ! -f ./aura_protection_suite_v2.zip ]; then
+            echo "ZIP not found in repo root"; ls -la; exit 1
+          fi
+          unzip -oq aura_protection_suite_v2.zip -d PROTECTION_TMP
+          rsync -a PROTECTION_TMP/ PROTECTION/
+
+      - name: Commit & push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="protection/aura-suite-v1-$(date -u +%Y%m%dT%H%M%SZ)"
+          git checkout -b "$BRANCH"
+          git add PROTECTION/ .github/PULL_REQUEST_TEMPLATE.md || true
+          git commit -m "chore: add AURA Protection Suite v1.0 (simple)" || echo "no changes"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          git push -u origin "$BRANCH"
