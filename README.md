@@ -43,6 +43,19 @@ pnpm lint
 pnpm type-check
 ```
 
+## Security
+
+Security is a top priority for Aura-Sign. We follow industry best practices for Web3 authentication and regularly audit our dependencies and code.
+
+- **Report vulnerabilities:** See [SECURITY.md](SECURITY.md)
+- **Security documentation:** [docs/security/](docs/security/)
+- **Audit process:** [docs/security/SECURITY_AUDIT.md](docs/security/SECURITY_AUDIT.md)
+
+```bash
+# Run security audit
+./scripts/security_audit.sh
+```
+
 ## License
 
 MIT
