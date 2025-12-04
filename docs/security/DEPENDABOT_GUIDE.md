@@ -1,5 +1,7 @@
 # GitHub Dependabot Configuration Guide
 
+> **Note:** This guide uses placeholders like `:owner/:repo` in commands. Replace these with `Kamil1230xd/aura-sign-mvp` for this repository, or use `gh` CLI's automatic detection by running commands from within the repository directory.
+
 ## Overview
 
 GitHub Dependabot is configured to automatically create pull requests for dependency updates and security vulnerabilities. This helps keep the project secure and up-to-date with minimal manual effort.
