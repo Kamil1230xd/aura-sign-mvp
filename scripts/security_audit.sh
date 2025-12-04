@@ -203,22 +203,22 @@ print_header "5. Checking TypeScript Security Configuration"
 } >> "${REPORT_FILE}"
 
 if [ -f "tsconfig.json" ]; then
-    # Check for strict mode
+    # Check for strict mode (which includes noImplicitAny)
     if grep -q '"strict":\s*true' tsconfig.json; then
-        print_success "TypeScript strict mode is enabled"
-        echo "✓ Strict mode enabled" >> "${REPORT_FILE}"
+        print_success "TypeScript strict mode is enabled (includes noImplicitAny, strictNullChecks, etc.)"
+        echo "✓ Strict mode enabled (includes noImplicitAny)" >> "${REPORT_FILE}"
     else
         print_warning "TypeScript strict mode is not enabled"
         echo "⚠ Strict mode not enabled - consider enabling for better type safety" >> "${REPORT_FILE}"
-    fi
-    
-    # Check for noImplicitAny
-    if grep -q '"noImplicitAny":\s*true' tsconfig.json; then
-        print_success "noImplicitAny is enabled"
-        echo "✓ noImplicitAny enabled" >> "${REPORT_FILE}"
-    else
-        print_warning "noImplicitAny is not explicitly enabled"
-        echo "⚠ noImplicitAny not enabled" >> "${REPORT_FILE}"
+        
+        # Only check noImplicitAny if strict mode is not enabled
+        if grep -q '"noImplicitAny":\s*true' tsconfig.json; then
+            print_success "noImplicitAny is enabled"
+            echo "✓ noImplicitAny enabled" >> "${REPORT_FILE}"
+        else
+            print_warning "noImplicitAny is not enabled"
+            echo "⚠ noImplicitAny not enabled" >> "${REPORT_FILE}"
+        fi
     fi
 else
     print_warning "tsconfig.json not found in root"
