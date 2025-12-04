@@ -2,8 +2,8 @@
 
 **A complete Sign-In with Ethereum (SIWE) authentication solution** built as a modern monorepo.
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-green)]()
-[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)]()
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![CI](https://img.shields.io/badge/CI-GitHub%20Actions-blue)](.github/workflows)
 
 ---
 
@@ -62,7 +62,7 @@ pnpm demo
 
 ## Environment variables (.env.example)
 
-Create `.env.example` in repo root with at least:
+A `.env.example` template should exist in repo root with at least:
 
 ```bash
 # Postgres / DB (if used)
@@ -105,7 +105,7 @@ pnpm type-check
 pnpm test
 
 # Run e2e (if configured)
-pnpm --filter @your/e2e-package test:e2e
+pnpm --filter demo-site test:e2e
 ```
 
 ---
@@ -148,7 +148,7 @@ Add secret scanning in CI (gitleaks/trufflehog). See `docs/security/` for automa
 
 - If `pnpm install` fails — clear pnpm store: `pnpm store prune`.
 - If ports conflict, check `.env` for overridden ports (Next.js default 3000).
-- If database migration fails: ensure `DATABASE_URL` points to a running Postgres instance and that `pgvector` extension is installed if vectors used.
+- If database migration fails: ensure `DATABASE_URL` points to a running Postgres instance and that `pgvector` extension is installed if vectors are used.
 
 ---
 
