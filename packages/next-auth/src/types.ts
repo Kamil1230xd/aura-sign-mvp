@@ -1,9 +1,13 @@
-export interface AuraSession {
+import type { IronSession } from 'iron-session';
+
+export interface AuraSessionData {
   address: string;
   chainId: number;
   isAuthenticated: boolean;
   nonce?: string;
 }
+
+export type AuraSession = IronSession<AuraSessionData>;
 
 export interface AuthConfig {
   secret: string;

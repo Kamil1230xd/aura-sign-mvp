@@ -1,6 +1,6 @@
 import { getIronSession } from 'iron-session';
 import type { NextRequest, NextResponse } from 'next/server';
-import type { AuraSession, AuthConfig } from './types';
+import type { AuraSession, AuraSessionData, AuthConfig } from './types';
 
 const defaultConfig: Partial<AuthConfig> = {
   cookieName: 'aura-session',
@@ -26,7 +26,7 @@ export async function getSession(
     },
   };
 
-  const session = await getIronSession<AuraSession>(req, res, sessionConfig);
+  const session = await getIronSession<AuraSessionData>(req, res, sessionConfig) as AuraSession;
 
   if (!session.isAuthenticated) {
     session.isAuthenticated = false;

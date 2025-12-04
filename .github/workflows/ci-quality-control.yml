@@ -1,0 +1,247 @@
+name: CI - Quality Control & Compatibility Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  quality-control:
+    name: Quality Control
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+      fail-fast: false
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Type check
+        run: |
+          echo "::group::Type Checking"
+          pnpm type-check || echo "::warning::Type check found errors but continuing..."
+          echo "::endgroup::"
+        continue-on-error: true
+
+      - name: Lint check
+        run: |
+          echo "::group::Linting"
+          # Configure ESLint for demo-site if not configured
+          if [ -f "apps/demo-site/package.json" ] && [ ! -f "apps/demo-site/.eslintrc.json" ]; then
+            echo '{"extends": "next/core-web-vitals"}' > apps/demo-site/.eslintrc.json
+          fi
+          pnpm lint || echo "::warning::Lint check found errors but continuing..."
+          echo "::endgroup::"
+        continue-on-error: true
+
+      - name: Build all packages
+        run: |
+          echo "::group::Building packages"
+          pnpm build
+          echo "::endgroup::"
+
+      - name: Security audit - Dependencies
+        run: |
+          echo "::group::Security Audit"
+          pnpm audit --audit-level=moderate || echo "::warning::Security vulnerabilities found in dependencies"
+          echo "::endgroup::"
+        continue-on-error: true
+
+      - name: Check for outdated dependencies
+        run: |
+          echo "::group::Outdated Dependencies Check"
+          pnpm outdated || echo "Some dependencies are outdated"
+          echo "::endgroup::"
+        continue-on-error: true
+
+  compatibility-check:
+    name: Compatibility & Scaling Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.15.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Analyze bundle size
+        run: |
+          echo "::group::Bundle Size Analysis"
+          echo "Analyzing package sizes..."
+          du -sh packages/*/dist 2>/dev/null || echo "No dist directories found yet"
+          du -sh apps/*/dist 2>/dev/null || echo "No app dist directories found yet"
+          du -sh apps/*/.next 2>/dev/null || echo "No .next directories found yet"
+          echo "::endgroup::"
+        continue-on-error: true
+
+      - name: Check TypeScript version compatibility
+        run: |
+          echo "::group::TypeScript Compatibility"
+          echo "Checking TypeScript version across packages..."
+          find . -name "package.json" -not -path "*/node_modules/*" -exec grep -H "typescript" {} \;
+          echo "::endgroup::"
+
+      - name: Check Node.js engine compatibility
+        run: |
+          echo "::group::Node.js Engine Compatibility"
+          echo "Checking Node.js engine requirements..."
+          find . -name "package.json" -not -path "*/node_modules/*" -exec grep -H "engines" {} \;
+          echo "::endgroup::"
+
+      - name: Dependency tree analysis
+        run: |
+          echo "::group::Dependency Tree"
+          pnpm list --depth=0 || true
+          echo "::endgroup::"
+
+  security-scan:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+        continue-on-error: true
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true
+
+      - name: Check for secrets in code
+        run: |
+          echo "::group::Secret Detection"
+          echo "Checking for potential secrets in codebase..."
+          # Basic secret patterns check
+          if grep -r -E "(password|secret|api[_-]?key|token)" --include="*.ts" --include="*.js" --include="*.json" . 2>/dev/null | grep -v node_modules | grep -v ".git/" | grep -v "package-lock.json" | grep -v "pnpm-lock.yaml"; then
+            echo "::warning::Potential secrets or sensitive keywords found in code. Please review."
+          else
+            echo "No obvious secrets found in source files."
+          fi
+          echo "::endgroup::"
+        continue-on-error: true
+
+  documentation-check:
+    name: Documentation Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check README files
+        run: |
+          echo "::group::Documentation Check"
+          echo "Checking for README files..."
+          find . -name "README.md" -not -path "*/node_modules/*" | while read file; do
+            echo "Found: $file"
+            wc -l "$file"
+          done
+          echo "::endgroup::"
+
+      - name: Check for required documentation
+        run: |
+          echo "::group::Required Documentation"
+          files=("README.md" "LICENSE" ".env.example")
+          for file in "${files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✓ $file exists"
+            else
+              echo "::warning::Missing $file"
+            fi
+          done
+          echo "::endgroup::"
+
+  report-status:
+    name: Quality Report
+    runs-on: ubuntu-latest
+    needs: [quality-control, compatibility-check, security-scan, documentation-check]
+    if: always()
+    
+    steps:
+      - name: Generate quality report
+        run: |
+          echo "::group::Quality Control Report"
+          echo "================================"
+          echo "CI Quality Control Summary"
+          echo "================================"
+          echo ""
+          echo "Quality Control: ${{ needs.quality-control.result }}"
+          echo "Compatibility Check: ${{ needs.compatibility-check.result }}"
+          echo "Security Scan: ${{ needs.security-scan.result }}"
+          echo "Documentation Check: ${{ needs.documentation-check.result }}"
+          echo ""
+          if [[ "${{ needs.quality-control.result }}" == "success" ]] && \
+             [[ "${{ needs.compatibility-check.result }}" == "success" ]]; then
+            echo "✓ Core quality checks passed"
+          else
+            echo "⚠ Some quality checks did not pass"
+          fi
+          echo "::endgroup::"
+
+      - name: Check overall status
+        run: |
+          if [[ "${{ needs.quality-control.result }}" != "success" ]]; then
+            echo "::error::Quality control checks failed"
+            exit 1
+          fi
