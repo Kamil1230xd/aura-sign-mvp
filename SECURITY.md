@@ -137,7 +137,7 @@ If you're contributing to Aura-Sign MVP, please follow these security best pract
 
 We use the following tools to maintain security:
 
-- **GitHub Dependabot**: Automated dependency updates
+- **GitHub Dependabot**: Automated dependency updates (configured for weekly npm and GitHub Actions updates)
 - **GitHub Advanced Security**: Code scanning and secret scanning
 - **pnpm audit**: Dependency vulnerability scanning
 - **TypeScript**: Type safety and compile-time checks

@@ -7,6 +7,7 @@ This directory contains all security-related documentation for the Aura-Sign MVP
 - [Security Policy](../../SECURITY.md) - Vulnerability disclosure and security contact information
 - [Security Audit Process](SECURITY_AUDIT.md) - How we conduct security audits
 - [Audit Report Template](AUDIT_REPORT_TEMPLATE.md) - Standard format for audit reports
+- [Dependabot Guide](DEPENDABOT_GUIDE.md) - Managing automated dependency updates
 - [Latest Audit Report](audits/2025-12-04_initial_audit.md) - Most recent security assessment
 
 ## Overview
@@ -23,6 +24,7 @@ Security is a critical aspect of the Aura-Sign MVP project. As a Web3 authentica
 ├── README.md                   # This file
 ├── SECURITY_AUDIT.md          # Audit process documentation
 ├── AUDIT_REPORT_TEMPLATE.md   # Template for audit reports
+├── DEPENDABOT_GUIDE.md        # Dependabot configuration and usage
 └── audits/                    # Historical audit reports
     └── 2025-12-04_initial_audit.md
 ```
@@ -68,7 +70,19 @@ Security is a critical aspect of the Aura-Sign MVP project. As a Web3 authentica
 - Remediation process
 - Common Web3 vulnerabilities
 
-### 3. Audit Report Template ([AUDIT_REPORT_TEMPLATE.md](AUDIT_REPORT_TEMPLATE.md))
+### 3. Dependabot Guide ([DEPENDABOT_GUIDE.md](DEPENDABOT_GUIDE.md))
+
+**Purpose:** Managing automated dependency updates  
+**Audience:** Development team, maintainers
+
+**Contents:**
+- Dependabot configuration details
+- How to review and merge update PRs
+- Managing security vs version updates
+- Troubleshooting common issues
+- Best practices for dependency management
+
+### 4. Audit Report Template ([AUDIT_REPORT_TEMPLATE.md](AUDIT_REPORT_TEMPLATE.md))
 
 **Purpose:** Standardized reporting format  
 **Audience:** Security auditors, development team
@@ -80,7 +94,7 @@ Security is a critical aspect of the Aura-Sign MVP project. As a Web3 authentica
 - Remediation planning
 - Sign-off procedures
 
-### 4. Audit Reports ([audits/](audits/))
+### 5. Audit Reports ([audits/](audits/))
 
 **Purpose:** Historical record of security assessments  
 **Audience:** Development team, stakeholders
@@ -242,7 +256,7 @@ See [SECURITY.md](../../SECURITY.md) for full details.
 ### Automated Tools
 
 - **pnpm audit** - Dependency vulnerability scanning
-- **GitHub Dependabot** - Automated dependency updates
+- **GitHub Dependabot** - Automated dependency updates (configured in `.github/dependabot.yml`)
 - **GitHub Advanced Security** - Code scanning and secret detection
 - **Custom audit script** - Comprehensive security checks
 
