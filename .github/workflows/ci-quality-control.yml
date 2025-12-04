@@ -163,7 +163,7 @@ jobs:
         continue-on-error: true
 
       - name: Upload Trivy results to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
         continue-on-error: true
@@ -172,9 +172,13 @@ jobs:
         run: |
           echo "::group::Secret Detection"
           echo "Checking for potential secrets in codebase..."
-          # Basic secret patterns check
-          if grep -r -E "(password|secret|api[_-]?key|token)" --include="*.ts" --include="*.js" --include="*.json" . 2>/dev/null | grep -v node_modules | grep -v ".git/" | grep -v "package-lock.json" | grep -v "pnpm-lock.yaml"; then
-            echo "::warning::Potential secrets or sensitive keywords found in code. Please review."
+          # Check for common secret patterns (base64 encoded secrets, API keys, tokens)
+          # Exclude common false positives like type definitions, test files, and documentation
+          if grep -r -E "(AKIA[0-9A-Z]{16}|sk_live_[0-9a-zA-Z]{24}|AIza[0-9A-Za-z\\-_]{35}|[0-9a-f]{32,64})" \
+            --include="*.ts" --include="*.js" --include="*.json" --include="*.env*" \
+            --exclude="*.d.ts" --exclude="*.test.*" --exclude="*.spec.*" \
+            . 2>/dev/null | grep -v node_modules | grep -v ".git/" | grep -v "package-lock.json" | grep -v "pnpm-lock.yaml" | grep -v ".env.example"; then
+            echo "::warning::Potential secrets or API keys found in code. Please review."
           else
             echo "No obvious secrets found in source files."
           fi
