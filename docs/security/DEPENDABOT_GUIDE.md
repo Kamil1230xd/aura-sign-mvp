@@ -89,10 +89,11 @@ Dependabot is configured in `.github/dependabot.yml` with the following settings
 To temporarily pause Dependabot updates:
 
 ```bash
-# Pause all updates
-gh api repos/:owner/:repo/dependabot/secrets -X PUT -f state=paused
+# Simplest method: Edit .github/dependabot.yml
+# Change schedule interval to "monthly" or remove the configuration
 
-# Or edit .github/dependabot.yml and set schedule to "monthly"
+# Or disable Dependabot via repository settings:
+# Settings → Code security and analysis → Dependabot → Disable
 ```
 
 ### Ignoring Specific Dependencies
@@ -176,11 +177,11 @@ schedule:
 # List Dependabot PRs
 gh pr list --label dependencies
 
-# View Dependabot status
-gh api repos/:owner/:repo/vulnerability-alerts
+# View Dependabot alerts
+gh api repos/:owner/:repo/dependabot/alerts
 
-# View dependency graph
-gh api repos/:owner/:repo/dependency-graph/sbom
+# List security advisories
+gh api repos/:owner/:repo/security-advisories
 ```
 
 ## Integration with Security Audit
@@ -203,11 +204,14 @@ All security checks must pass before merging.
 
 **Solution:**
 ```bash
-# Validate configuration
-gh api repos/:owner/:repo/dependabot/secrets
+# Validate configuration file syntax
+yamllint .github/dependabot.yml
 
-# Check Dependabot logs in repository settings
+# Check Dependabot status in repository settings
 # Settings → Code security and analysis → Dependabot
+
+# View Dependabot alerts to confirm it's working
+gh api repos/:owner/:repo/dependabot/alerts
 ```
 
 ### Conflicting PRs
