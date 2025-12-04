@@ -204,7 +204,7 @@ print_header "5. Checking TypeScript Security Configuration"
 
 if [ -f "tsconfig.json" ]; then
     # Check for strict mode (which includes noImplicitAny)
-    if grep -q '"strict":\s*true' tsconfig.json; then
+    if grep -qE '"strict"[[:space:]]*:[[:space:]]*true' tsconfig.json; then
         print_success "TypeScript strict mode is enabled (includes noImplicitAny, strictNullChecks, etc.)"
         echo "✓ Strict mode enabled (includes noImplicitAny)" >> "${REPORT_FILE}"
     else
@@ -212,7 +212,7 @@ if [ -f "tsconfig.json" ]; then
         echo "⚠ Strict mode not enabled - consider enabling for better type safety" >> "${REPORT_FILE}"
         
         # Only check noImplicitAny if strict mode is not enabled
-        if grep -q '"noImplicitAny":\s*true' tsconfig.json; then
+        if grep -qE '"noImplicitAny"[[:space:]]*:[[:space:]]*true' tsconfig.json; then
             print_success "noImplicitAny is enabled"
             echo "✓ noImplicitAny enabled" >> "${REPORT_FILE}"
         else

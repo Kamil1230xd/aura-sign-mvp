@@ -72,7 +72,7 @@ This is the initial security audit of the Aura-Sign MVP project, focusing on est
 **Affected Component:** Root package.json, all workspaces
 
 **Description:**
-Several dependencies are outdated and may contain known vulnerabilities or improvements:
+Several dependencies are outdated and may contain known vulnerabilities or improvements (as of 2025-12-04):
 - `@types/node`: 20.19.25 (latest: 24.10.1)
 - `turbo`: 1.13.4 (latest: 2.6.3)
 

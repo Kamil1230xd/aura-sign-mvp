@@ -64,14 +64,19 @@ jobs:
       - name: Run security audit script
         id: audit
         run: |
-          ./scripts/security_audit.sh
+          ./scripts/security_audit.sh || echo "audit_failed=true" >> $GITHUB_OUTPUT
         continue-on-error: true
       
       - name: Check for vulnerabilities
         id: check-vulnerabilities
         run: |
           # This will fail if vulnerabilities are found
-          pnpm audit --audit-level high
+          if pnpm audit --audit-level high; then
+            echo "vulnerabilities_found=false" >> $GITHUB_OUTPUT
+          else
+            echo "vulnerabilities_found=true" >> $GITHUB_OUTPUT
+            exit 1
+          fi
         continue-on-error: true
       
       - name: Upload audit report
