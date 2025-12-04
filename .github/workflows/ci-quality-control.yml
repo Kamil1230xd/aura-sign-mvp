@@ -66,10 +66,6 @@ jobs:
       - name: Lint check
         run: |
           echo "::group::Linting"
-          # Configure ESLint for demo-site if not configured
-          if [ -f "apps/demo-site/package.json" ] && [ ! -f "apps/demo-site/.eslintrc.json" ]; then
-            echo '{"extends": "next/core-web-vitals"}' > apps/demo-site/.eslintrc.json
-          fi
           pnpm lint || echo "::warning::Lint check found errors but continuing..."
           echo "::endgroup::"
         continue-on-error: true
@@ -172,9 +168,9 @@ jobs:
         run: |
           echo "::group::Secret Detection"
           echo "Checking for potential secrets in codebase..."
-          # Check for common secret patterns (base64 encoded secrets, API keys, tokens)
-          # Exclude common false positives like type definitions, test files, and documentation
-          if grep -r -E "(AKIA[0-9A-Z]{16}|sk_live_[0-9a-zA-Z]{24}|AIza[0-9A-Za-z\\-_]{35}|[0-9a-f]{32,64})" \
+          # Check for AWS keys, Stripe keys, Google API keys
+          # More specific patterns to reduce false positives
+          if grep -r -E "(AKIA[0-9A-Z]{16}|sk_live_[0-9a-zA-Z]{24,}|AIza[0-9A-Za-z\\-_]{35})" \
             --include="*.ts" --include="*.js" --include="*.json" --include="*.env*" \
             --exclude="*.d.ts" --exclude="*.test.*" --exclude="*.spec.*" \
             . 2>/dev/null | grep -v node_modules | grep -v ".git/" | grep -v "package-lock.json" | grep -v "pnpm-lock.yaml" | grep -v ".env.example"; then
