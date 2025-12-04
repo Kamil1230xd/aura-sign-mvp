@@ -70,7 +70,8 @@ jobs:
       - name: Check for vulnerabilities
         id: check-vulnerabilities
         run: |
-          # This will fail if vulnerabilities are found
+          # Check for high and critical vulnerabilities only
+          # Moderate and low severity issues are tracked but don't fail the build
           if pnpm audit --audit-level high; then
             echo "vulnerabilities_found=false" >> $GITHUB_OUTPUT
           else
