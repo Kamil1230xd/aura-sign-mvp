@@ -1,0 +1,57 @@
+// schema_extra.prisma
+// 
+// Supplementary Prisma schema snippet describing identity/trust_event models
+// and the unsupported vector column for pgvector integration.
+// 
+// This is a REFERENCE FILE that should be integrated into the canonical
+// schema.prisma by maintainers. It is not used directly by Prisma.
+//
+// Prerequisites:
+// - PostgreSQL database with pgvector extension enabled
+// - HNSW index created on the embedding column (see db/init/02_pgvector_hnsw.sql)
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Identity {
+  id        String   @id @default(uuid())
+  address   String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Vector embedding column (unsupported type in Prisma, use raw queries)
+  // This field represents a pgvector column for similarity search
+  // Use the vector.ts helper functions to interact with this column
+  embedding Unsupported("vector(1536)")? // OpenAI ada-002 embedding dimension
+  
+  // Relations
+  trustEventsGiven    TrustEvent[] @relation("TrusterIdentity")
+  trustEventsReceived TrustEvent[] @relation("TrustedIdentity")
+  
+  @@index([address])
+  // Note: HNSW index on embedding should be created via raw SQL (see db/init/02_pgvector_hnsw.sql)
+}
+
+model TrustEvent {
+  id         String   @id @default(uuid())
+  truster    String   // Identity ID that gave trust
+  trusted    String   // Identity ID that received trust
+  weight     Float    @default(1.0)
+  context    String?  // Optional context or reason
+  createdAt  DateTime @default(now())
+  
+  // Relations
+  trusterIdentity Identity @relation("TrusterIdentity", fields: [truster], references: [id], onDelete: Cascade)
+  trustedIdentity Identity @relation("TrustedIdentity", fields: [trusted], references: [id], onDelete: Cascade)
+  
+  @@index([truster])
+  @@index([trusted])
+  @@index([createdAt])
+  @@unique([truster, trusted]) // Prevent duplicate trust relationships
+}

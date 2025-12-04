@@ -1,0 +1,89 @@
+# Prometheus alert rules for Aura-Sign monitoring
+# 
+# Defines alerts for vector search latency, trust computation performance,
+# and service health metrics.
+
+groups:
+  - name: vector_similarity_alerts
+    interval: 30s
+    rules:
+      # Alert when vector search latency is high
+      - alert: HighVectorSearchLatency
+        expr: |
+          histogram_quantile(0.95, 
+            rate(vector_similarity_search_duration_ms_bucket[5m])
+          ) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          component: vector-search
+        annotations:
+          summary: "High vector search latency detected"
+          description: "95th percentile vector search latency is {{ $value }}ms (threshold: 1000ms) for {{ $labels.job }}"
+      
+      # Alert when vector search error rate is high
+      - alert: HighVectorSearchErrorRate
+        expr: |
+          rate(vector_similarity_searches_total{status="error"}[5m]) 
+          / rate(vector_similarity_searches_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          component: vector-search
+        annotations:
+          summary: "High vector search error rate"
+          description: "Vector search error rate is {{ $value | humanizePercentage }} for {{ $labels.job }}"
+
+  - name: trustmath_alerts
+    interval: 30s
+    rules:
+      # Alert when trust computation duration is excessive
+      - alert: LongTrustComputationDuration
+        expr: |
+          histogram_quantile(0.95,
+            rate(trustmath_computation_duration_ms_bucket[5m])
+          ) > 5000
+        for: 10m
+        labels:
+          severity: warning
+          component: trustmath
+        annotations:
+          summary: "Trust computation taking too long"
+          description: "95th percentile trust computation duration is {{ $value }}ms (threshold: 5000ms) for type {{ $labels.type }}"
+      
+      # Alert when trust computation rate drops significantly
+      - alert: LowTrustComputationRate
+        expr: |
+          rate(trustmath_computations_total[5m]) < 0.1
+        for: 15m
+        labels:
+          severity: info
+          component: trustmath
+        annotations:
+          summary: "Low trust computation rate"
+          description: "Trust computation rate is {{ $value }} computations/sec for {{ $labels.job }}"
+
+  - name: service_health_alerts
+    interval: 30s
+    rules:
+      # Alert when service is down
+      - alert: ServiceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+          component: infrastructure
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "Service {{ $labels.job }} on {{ $labels.instance }} has been down for more than 2 minutes"
+      
+      # Alert when scrape duration is high
+      - alert: HighScrapeDuration
+        expr: scrape_duration_seconds > 5
+        for: 5m
+        labels:
+          severity: warning
+          component: monitoring
+        annotations:
+          summary: "High metrics scrape duration"
+          description: "Scraping metrics from {{ $labels.job }} is taking {{ $value }}s (threshold: 5s)"
