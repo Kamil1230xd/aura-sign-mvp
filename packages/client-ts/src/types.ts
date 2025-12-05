@@ -1,3 +1,4 @@
+// License: MIT. See .github/LICENSES/LICENSE_SDK.md
 export interface AuraSession {
   address: string;
   chainId: number;
