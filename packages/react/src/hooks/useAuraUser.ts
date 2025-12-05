@@ -1,3 +1,4 @@
+// License: MIT. See .github/LICENSES/LICENSE_SDK.md
 import { useState, useEffect, useCallback } from 'react';
 import { AuraClient } from '@aura-sign/client';
 import { ethers } from 'ethers';

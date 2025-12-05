@@ -1,3 +1,4 @@
+// License: MIT. See .github/LICENSES/LICENSE_SDK.md
 import React from 'react';
 import { useAuraUser } from '../hooks/useAuraUser';
 import type { AuthState } from '../types';

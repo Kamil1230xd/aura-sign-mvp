@@ -1,3 +1,4 @@
+// License: BSL 1.1. Commercial use prohibited. See .github/LICENSES/LICENSE_CORE.md
 import { getIronSession } from 'iron-session';
 import type { NextRequest, NextResponse } from 'next/server';
 import type { AuraSession, AuthConfig } from './types';

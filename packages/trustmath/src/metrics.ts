@@ -1,3 +1,4 @@
+// License: BSL 1.1. Commercial use prohibited. See .github/LICENSES/LICENSE_CORE.md
 /**
  * Prometheus metrics for Trustmath operations
  * Provides custom metrics and HTTP handler for metrics endpoint

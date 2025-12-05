@@ -1,3 +1,4 @@
+// License: MIT. See .github/LICENSES/LICENSE_SDK.md
 import type { AuraClientConfig, SignInRequest, AuraSession, AuthResponse } from './types';
 
 export class AuraClient {
