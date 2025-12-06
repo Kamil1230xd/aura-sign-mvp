@@ -233,7 +233,9 @@ This repository uses a hybrid licensing model (see `NOTICE.md` for authoritative
 - **Core Engine** (`/packages/trustmath`, `/packages/next-auth`): **BSL 1.1** (Source Available)
 - **Documentation** (`/docs`): **CC-BY 4.0**
 
-Note: `/packages/database-client` exists in the repository but is not explicitly listed in NOTICE.md. Check with maintainers for its licensing.
+**Note on licensing discrepancies:**
+- `/packages/database-client` exists in the repository but is not listed in NOTICE.md - check with maintainers for licensing
+- `/packages/ai-verification` is listed in NOTICE.md (PolyForm Shield) but does not currently exist in the repository
 
 Always respect the licensing boundaries and include appropriate MIT license headers in SDK packages (`client-ts`, `react`).
 
