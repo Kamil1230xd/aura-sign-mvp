@@ -33,15 +33,19 @@ export function useAuraUser(): UseAuraUserReturn {
       setError(null);
       setState('connecting');
 
+      // Use globalThis instead of window for SSR/Deno compatibility
+      // TypeScript note: ethereum is not in standard globalThis types, using type assertion
+      const eth = typeof globalThis !== 'undefined' ? (globalThis as any).ethereum : undefined;
+
       // Check for ethereum provider
-      if (!window.ethereum) {
+      if (!eth) {
         throw new Error('MetaMask not installed');
       }
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.BrowserProvider(eth);
       
       // Request account access
-      await window.ethereum.request({
+      await eth.request({
         method: 'eth_requestAccounts'
       });
 
