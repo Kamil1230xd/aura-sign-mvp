@@ -178,4 +178,4 @@ This project is protected by **Aura Protection Suite v1.0**.
 - **Core Engine:** Business Source License 1.1 (Source Available)
 - **AI Models:** PolyForm Shield (Data Protected)
 
-See <a>NOTICE.md</a> for details.
+See [NOTICE.md](NOTICE.md) for details.
