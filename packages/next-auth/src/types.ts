@@ -4,6 +4,9 @@ export interface AuraSession {
   chainId: number;
   isAuthenticated: boolean;
   nonce?: string;
+  // Methods added by iron-session
+  save(): Promise<void>;
+  destroy(): void;
 }
 
 export interface AuthConfig {

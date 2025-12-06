@@ -1,6 +1,5 @@
 // License: BSL 1.1. Commercial use prohibited. See .github/LICENSES/LICENSE_CORE.md
 import { getIronSession } from 'iron-session';
-import type { NextRequest, NextResponse } from 'next/server';
 import type { AuraSession, AuthConfig } from './types';
 
 const defaultConfig: Partial<AuthConfig> = {
@@ -13,9 +12,14 @@ const defaultConfig: Partial<AuthConfig> = {
   },
 };
 
+/**
+ * Gets the user's session from the request/response.
+ * Compatible with both Next.js Pages Router (NextApiRequest/NextApiResponse)
+ * and App Router (NextRequest/NextResponse).
+ */
 export async function getSession(
-  req: NextRequest,
-  res: NextResponse,
+  req: any,
+  res: any,
   config: AuthConfig
 ): Promise<AuraSession> {
   const sessionConfig = {
@@ -38,9 +42,13 @@ export async function getSession(
   return session;
 }
 
+/**
+ * Destroys the user's session.
+ * Compatible with both Next.js Pages Router and App Router.
+ */
 export async function destroySession(
-  req: NextRequest,
-  res: NextResponse,
+  req: any,
+  res: any,
   config: AuthConfig
 ): Promise<void> {
   const session = await getSession(req, res, config);
