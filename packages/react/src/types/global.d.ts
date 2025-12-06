@@ -12,10 +12,12 @@ interface EthereumProvider {
 }
 
 declare global {
-  interface WindowEventMap {
-    ethereum: EthereumProvider;
+  // Extend Window interface for browser environments
+  interface Window {
+    ethereum?: EthereumProvider;
   }
   
+  // Declare on globalThis for universal access (SSR/Deno)
   var ethereum: EthereumProvider | undefined;
 }
 
