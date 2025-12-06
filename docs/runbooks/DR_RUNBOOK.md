@@ -334,13 +334,17 @@ If WAL archiving is enabled:
 ```bash
 # Note: PostgreSQL service name and paths vary by distribution
 # This example uses PostgreSQL 16 (matching pgvector/pgvector:pg16 Docker image)
-# Ubuntu/Debian: postgresql, /var/lib/postgresql/16/main
-# RHEL/CentOS: postgresql-16, /var/lib/pgsql/16/data
+# Ubuntu/Debian: service name often just 'postgresql' (manages all versions)
+#                /var/lib/postgresql/16/main
+# RHEL/CentOS: version-specific service name 'postgresql-16'
+#              /var/lib/pgsql/16/data
 # Adjust paths and version numbers according to your installation
 
-# 1. Stop PostgreSQL (Ubuntu example)
+# 1. Stop PostgreSQL
+# Ubuntu/Debian (service manages all versions):
 systemctl stop postgresql
-# RHEL: systemctl stop postgresql-16
+# RHEL/CentOS (version-specific service):
+# systemctl stop postgresql-16
 
 # 2. Replace data directory with base backup
 rm -rf /var/lib/postgresql/16/main/*

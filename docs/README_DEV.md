@@ -162,6 +162,10 @@ pnpm lint
 Fix linting issues automatically where possible:
 
 ```bash
+# Fix lint issues across all packages
+pnpm -r lint -- --fix
+
+# Or fix for a specific package
 pnpm --filter demo-site lint -- --fix
 ```
 
