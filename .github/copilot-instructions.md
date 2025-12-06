@@ -23,6 +23,38 @@ This repository is a **TypeScript-first monorepo** implementing Sign-In with Eth
 - **TypeScript**: Strict mode enabled across all packages
 - **Workspaces**: `apps/*` and `packages/*`
 
+### Package Dependency Graph
+
+```
+apps/demo-site
+  └─> @aura-sign/client (MIT)
+  └─> @aura-sign/react (MIT)
+  └─> @aura-sign/next-auth (BSL 1.1)
+
+apps/web
+  └─> (similar dependencies)
+
+@aura-sign/react (MIT)
+  └─> @aura-sign/client (MIT)
+  └─> ethers v6
+
+@aura-sign/next-auth (BSL 1.1)
+  └─> siwe
+  └─> iron-session
+
+@aura-sign/client (MIT)
+  └─> ethers v6
+
+@aura-sign/database-client
+  └─> @prisma/client
+  └─> pgvector support
+
+@aura-sign/trustmath (BSL 1.1)
+  └─> (trust calculation logic)
+```
+
+**Build order**: Packages build before apps that depend on them (managed by Turbo)
+
 ## Technology Stack
 
 - **Frontend**: Next.js 14, React 18, TailwindCSS
@@ -64,7 +96,38 @@ pnpm clean
 pnpm --filter demo-site dev
 pnpm --filter @aura-sign/client build
 pnpm --filter @aura-sign/react type-check
+
+# Install dependency to specific package
+pnpm --filter @aura-sign/client add ethers
+pnpm --filter demo-site add -D @types/node
+
+# Run command in all packages
+pnpm -r build
+pnpm -r --parallel dev
 ```
+
+### Package Dependencies
+
+Internal package dependencies use the workspace protocol:
+
+```json
+{
+  "dependencies": {
+    "@aura-sign/client": "workspace:*",
+    "@aura-sign/react": "workspace:*"
+  }
+}
+```
+
+**Important**: Always use `workspace:*` for internal dependencies, never hardcoded versions.
+
+**Core dependencies:**
+- **ethers v6.x**: Blockchain interactions, wallet connections
+- **Next.js 14**: Frontend framework with App Router
+- **React 18**: UI library with hooks
+- **iron-session**: Secure session management for SIWE
+- **Prisma**: Database ORM with pgvector support
+- **TypeScript 5.3+**: Type safety across the monorepo
 
 ## Code Style & Conventions
 
@@ -133,8 +196,23 @@ Always include appropriate license headers:
 
 - **Unit tests**: Not currently comprehensive - add tests when modifying critical logic
 - **Type checking**: Primary verification method via `pnpm type-check`
+  - Note: Some packages may have type errors; fix only errors related to your changes
 - **Linting**: Run `pnpm lint` before committing
+  - ESLint is configured for Next.js apps (demo-site, web) but not for all packages
+  - Packages use TypeScript compiler for validation instead
 - **Manual testing**: Start demo app with `pnpm demo` and test wallet flows
+  - Demo site runs on port 3001 by default
+  - Test with MetaMask or another Web3 wallet extension
+  - Verify SIWE message signing and session creation
+
+### Testing Web3/SIWE Flows
+
+When testing authentication:
+1. Ensure MetaMask or compatible wallet is installed
+2. Connect wallet to localhost (may need to add network manually)
+3. Sign the SIWE message when prompted
+4. Verify session is created and persisted
+5. Test logout flow and session cleanup
 
 ## Environment Setup
 
@@ -194,12 +272,57 @@ pnpm migrate
 - Use try-catch blocks for async operations
 - Provide user-friendly error messages in UI
 
+**Example:**
+```typescript
+// Good: Typed error response
+async function verifySignature(signature: string): Promise<{ success: boolean; error?: string }> {
+  try {
+    // verification logic
+    return { success: true };
+  } catch (error) {
+    console.error('Verification failed:', error); // Log server-side
+    return { success: false, error: 'Invalid signature' }; // User-friendly message
+  }
+}
+```
+
+### Web3 Provider Access
+
+Always use `globalThis.ethereum` instead of `window.ethereum` for SSR/Deno compatibility:
+
+```typescript
+// Good: SSR-compatible
+if (typeof globalThis !== 'undefined' && globalThis.ethereum) {
+  const provider = globalThis.ethereum;
+}
+
+// Bad: SSR will fail
+if (window.ethereum) {
+  const provider = window.ethereum;
+}
+```
+
 ## Build & Deployment
 
 - **Build order**: Turbo handles dependency resolution automatically
 - **Production builds**: Run `pnpm build` before deployment
-- **Type checking**: Always passes before merge
+- **Type checking**: Should pass before merge (some known issues in next-auth)
 - **Port configuration**: Demo site on 3001 (not default 3000)
+
+### CI/CD Workflows
+
+The repository includes GitHub Actions workflows:
+
+- **Deno workflow** (`.github/workflows/deno.yml`): Runs Deno linting and tests
+  - Triggers on push/PR to main branch
+  - Uses Deno v1.x for compatibility
+- **SLSA provenance** (`.github/workflows/generator-generic-ossf-slsa3-publish.yml`): Generates supply chain attestations
+- **Aura protection** (`.github/workflows/apply-aura-protection.yml`): Applies watermarking and behavioral fingerprints
+
+When making changes:
+- CI must pass before merging
+- Fix any linting errors in Deno-compatible code
+- Ensure type checking passes for modified packages
 
 ## Git Workflow
 
@@ -210,13 +333,98 @@ pnpm migrate
 
 ## Troubleshooting
 
+### Common Issues
+
 - **pnpm install fails**: Clear store with `pnpm store prune`
-- **Port conflicts**: Check `.env` for port overrides
+- **Port conflicts**: Check `.env` for port overrides (demo site uses 3001, not 3000)
 - **Migration failures**: Ensure Postgres running and `DATABASE_URL` correct
 - **Build failures**: Run `pnpm clean` then `pnpm build`
+- **Type errors in next-auth**: Known issue with iron-session types; fix only if modifying that package
+- **ESLint not configured**: Run `next lint` in Next.js apps to set up ESLint when needed
+
+### Debugging Tips
+
+**TypeScript compilation issues:**
+```bash
+# Check specific package
+pnpm --filter @aura-sign/client type-check
+
+# Watch mode for iterative development
+pnpm --filter @aura-sign/client dev
+```
+
+**Wallet connection issues:**
+- Check browser console for Web3 provider errors
+- Verify MetaMask is unlocked and on correct network
+- Check `globalThis.ethereum` is available (SSR compatibility)
+- Review SIWE message format and nonce generation
+
+**Session issues:**
+- Verify `IRON_SESSION_PASSWORD` is set (minimum 32 characters)
+- Check browser cookies are enabled
+- Inspect session data in browser DevTools > Application > Cookies
+- Verify session secret is consistent across restarts
+
+**Database connectivity:**
+- Ensure PostgreSQL is running: `docker-compose ps`
+- Test connection: `psql $DATABASE_URL`
+- Check pgvector extension is installed if using embeddings
+
+## Known Issues
+
+- **Type errors in `@aura-sign/next-auth`**: iron-session type definitions have some gaps. Only fix if modifying that package.
+- **ESLint setup**: Next.js apps require interactive ESLint configuration on first `pnpm lint` run.
+- **Licensing discrepancy**: `NOTICE.md` references `/packages/ai-verification` which doesn't exist. The actual package is `/packages/database-client` which is not listed.
 
 ## Additional Resources
 
-- Developer guide: `docs/README_DEV.md` (if exists)
-- Security docs: `docs/security/README.md` (if exists)
-- Deployment runbooks: `docs/runbooks/` (operational procedures)
+- **Developer guide**: `docs/README_DEV.md` - comprehensive setup and workflow documentation
+- **Security guidelines**: `docs/security/README.md` - authentication, encryption, audit logging
+- **Disaster recovery**: `docs/runbooks/DR_RUNBOOK.md` - backup, restore, and operational procedures
+- **Operations**: `docs/ops/` - deployment plans and infrastructure quickstart
+
+## Working with the Codebase
+
+### Before Making Changes
+
+1. **Understand the scope**: Read related code and tests first
+2. **Check dependencies**: Understand package relationships (`workspace:*` protocol)
+3. **Review license**: Ensure changes respect BSL 1.1 vs MIT boundaries
+4. **Check security**: Follow SIWE nonce validation and session management patterns
+
+### Making Changes
+
+1. **Start development server**: `pnpm --filter <package> dev` for watch mode
+2. **Make minimal changes**: Surgical edits, avoid refactoring unless necessary
+3. **Test iteratively**: `pnpm type-check` after each change
+4. **Verify manually**: For UI changes, run `pnpm demo` and test in browser
+
+### Example: Adding a New React Hook
+
+```typescript
+// packages/react/src/hooks/useMyHook.ts
+// License: MIT. See .github/LICENSES/LICENSE_SDK.md
+
+import { useState, useEffect } from 'react';
+
+export interface MyHookOptions {
+  enabled?: boolean;
+}
+
+export function useMyHook(options: MyHookOptions = {}) {
+  const [data, setData] = useState<string | null>(null);
+  
+  useEffect(() => {
+    if (!options.enabled) return;
+    // Hook logic here
+  }, [options.enabled]);
+  
+  return { data };
+}
+```
+
+Then export from `packages/react/src/index.ts`:
+```typescript
+export { useMyHook } from './hooks/useMyHook';
+export type { MyHookOptions } from './hooks/useMyHook';
+```
