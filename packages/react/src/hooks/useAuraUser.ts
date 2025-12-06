@@ -38,7 +38,7 @@ export function useAuraUser(): UseAuraUserReturn {
       // where window may not be defined. Type assertion used to avoid
       // global type modifications (consider adding global.d.ts in future PR).
       if (!(globalThis as any).ethereum) {
-        throw new Error('MetaMask not installed');
+        throw new Error('Ethereum provider not available');
       }
 
       const provider = new ethers.BrowserProvider((globalThis as any).ethereum);
