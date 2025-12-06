@@ -113,7 +113,7 @@ pnpm --filter @aura-sign/react type-check
 
 - **Embeddings and evidence**: Treat as sensitive, apply retention policies
 - **Audit logs**: Keep trail for attestation issuance and admin actions
-- **Database encryption**: Use S3 server-side encryption for stored data
+- **Storage encryption**: Use encryption at rest for stored data (S3 server-side encryption for object storage, PostgreSQL encryption for database)
 - **API endpoints**: Always validate authentication and authorization
 
 ### License Awareness
@@ -123,7 +123,11 @@ The repository uses **Hybrid Licensing** (see `NOTICE.md`):
 - **MIT**: `/packages/client-ts`, `/packages/react` (freely modifiable)
 - **BSL 1.1**: `/packages/trustmath`, `/packages/next-auth` (source available, restricted use)
 - **PolyForm Shield**: AI models and data (protected)
-- Always include license headers: `// License: MIT. See .github/LICENSES/LICENSE_SDK.md`
+
+Always include appropriate license headers:
+- MIT packages: `// License: MIT. See .github/LICENSES/LICENSE_SDK.md`
+- BSL 1.1 packages: `// License: BSL 1.1. See .github/LICENSES/LICENSE_CORE.md`
+- Protected packages: `// License: PolyForm Shield. See .github/LICENSES/LICENSE_DATA.md`
 
 ## Testing Approach
 
