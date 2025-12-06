@@ -33,15 +33,18 @@ export function useAuraUser(): UseAuraUserReturn {
       setError(null);
       setState('connecting');
 
-      // Check for ethereum provider
-      if (!window.ethereum) {
+      // Using globalThis.ethereum instead of window.ethereum for SSR/Deno compatibility
+      // globalThis doesn't throw ReferenceError in SSR, allowing graceful error handling
+      const ethereum = (globalThis as any).ethereum;
+      
+      if (!ethereum) {
         throw new Error('MetaMask not installed');
       }
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
+      const provider = new ethers.BrowserProvider(ethereum);
       
       // Request account access
-      await window.ethereum.request({
+      await ethereum.request({
         method: 'eth_requestAccounts'
       });
 
