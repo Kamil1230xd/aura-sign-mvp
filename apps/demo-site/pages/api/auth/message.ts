@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { auraAuth } from '@aura-sign/next-auth';
+import { validateMethod, handleApiError } from '../../../lib/api-utils';
 
 interface MessageRequest {
   address: string;
@@ -10,8 +11,8 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  if (!validateMethod(req, res, ['POST'])) {
+    return;
   }
 
   try {
@@ -26,7 +27,6 @@ export default async function handler(
 
     res.status(200).json({ message });
   } catch (error) {
-    console.error('Message generation error:', error);
-    res.status(500).json({ error: 'Failed to generate message' });
+    handleApiError(res, error, 'Failed to generate message', 'Message generation error');
   }
 }

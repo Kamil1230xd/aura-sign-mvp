@@ -1,7 +1,6 @@
 // License: BSL 1.1. Commercial use prohibited. See .github/LICENSES/LICENSE_CORE.md
 import { getIronSession } from 'iron-session';
-import type { NextRequest, NextResponse } from 'next/server';
-import type { AuraSession, AuthConfig } from './types';
+import type { AuraSessionData, AuraSession, AuthConfig } from './types';
 
 const defaultConfig: Partial<AuthConfig> = {
   cookieName: 'aura-session',
@@ -14,8 +13,8 @@ const defaultConfig: Partial<AuthConfig> = {
 };
 
 export async function getSession(
-  req: NextRequest,
-  res: NextResponse,
+  req: any,
+  res: any,
   config: AuthConfig
 ): Promise<AuraSession> {
   const sessionConfig = {
@@ -27,7 +26,7 @@ export async function getSession(
     },
   };
 
-  const session = await getIronSession<AuraSession>(req, res, sessionConfig);
+  const session = await getIronSession<AuraSessionData>(req, res, sessionConfig);
 
   if (!session.isAuthenticated) {
     session.isAuthenticated = false;
@@ -39,8 +38,8 @@ export async function getSession(
 }
 
 export async function destroySession(
-  req: NextRequest,
-  res: NextResponse,
+  req: any,
+  res: any,
   config: AuthConfig
 ): Promise<void> {
   const session = await getSession(req, res, config);
