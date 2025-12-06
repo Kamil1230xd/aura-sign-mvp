@@ -18,7 +18,7 @@ declare global {
   }
   
   // Declare on globalThis for universal access (SSR/Deno)
-  var ethereum: EthereumProvider | undefined;
+  declare var ethereum: EthereumProvider | undefined;
 }
 
 export {};

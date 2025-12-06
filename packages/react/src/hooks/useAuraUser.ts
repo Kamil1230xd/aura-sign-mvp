@@ -38,7 +38,7 @@ export function useAuraUser(): UseAuraUserReturn {
       // In SSR environments and Deno, window may not exist, but globalThis is universal
       const eth = globalThis.ethereum;
       if (!eth) {
-        throw new Error('MetaMask not installed');
+        throw new Error('No Ethereum wallet detected');
       }
 
       const provider = new ethers.BrowserProvider(eth);
