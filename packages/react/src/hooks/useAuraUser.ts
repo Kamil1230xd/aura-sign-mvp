@@ -37,7 +37,7 @@ export function useAuraUser(): UseAuraUserReturn {
       // Use globalThis instead of window for SSR/Deno compatibility
       // where window may not be defined. Type assertion used to avoid
       // global type modifications (consider adding global.d.ts in future PR).
-      if (typeof globalThis === 'undefined' || !(globalThis as any).ethereum) {
+      if (!(globalThis as any).ethereum) {
         throw new Error('MetaMask not installed');
       }
 
