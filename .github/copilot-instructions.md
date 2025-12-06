@@ -238,8 +238,7 @@ docker-compose -f docker-compose.ops.yml up -d
 This repository uses a hybrid licensing model:
 
 - **SDKs & UI** (`/packages/client-ts`, `/packages/react`): **MIT** (Open Source)
-- **Core Engine** (`/packages/trustmath`, `/packages/next-auth`): **BSL 1.1** (Source Available)
-- **AI Data** (`/packages/ai-verification`): **PolyForm Shield** (Protected)
+- **Core Engine** (`/packages/trustmath`, `/packages/next-auth`, `/packages/database-client`): **BSL 1.1** (Source Available)
 - **Documentation** (`/docs`): **CC-BY 4.0**
 
 Always respect the licensing boundaries and include appropriate headers.
