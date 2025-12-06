@@ -201,18 +201,12 @@ EMBEDDING_API=http://localhost:4001
 
 ## Infrastructure
 
-The project uses Docker Compose for local infrastructure:
+The project includes infrastructure configurations in the `/infra` directory:
 
-```bash
-# Start local infrastructure (Postgres, MinIO, Redis)
-docker-compose up -d
+- Prometheus configuration: `infra/prometheus/prometheus.yml`
+- Alert rules: `infra/prometheus/alert.rules.yml`
 
-# Monitoring stack (Prometheus, Grafana)
-docker-compose -f docker-compose.ops.yml up -d
-```
-
-- Prometheus: http://localhost:9091
-- Grafana: http://localhost:3001
+For local development, ensure required services (Postgres, Redis, MinIO) are available according to environment variables in `.env`.
 
 ## Documentation
 
