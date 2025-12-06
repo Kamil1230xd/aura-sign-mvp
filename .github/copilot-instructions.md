@@ -227,13 +227,15 @@ For local development, ensure required services (Postgres, Redis, MinIO) are ava
 
 ## Hybrid Licensing Model
 
-This repository uses a hybrid licensing model:
+This repository uses a hybrid licensing model (see `NOTICE.md` for authoritative information):
 
 - **SDKs & UI** (`/packages/client-ts`, `/packages/react`): **MIT** (Open Source)
-- **Core Engine** (`/packages/trustmath`, `/packages/next-auth`, `/packages/database-client`): **BSL 1.1** (Source Available)
+- **Core Engine** (`/packages/trustmath`, `/packages/next-auth`): **BSL 1.1** (Source Available)
 - **Documentation** (`/docs`): **CC-BY 4.0**
 
-Always respect the licensing boundaries and include appropriate headers.
+Note: `/packages/database-client` exists in the repository but is not explicitly listed in NOTICE.md. Check with maintainers for its licensing.
+
+Always respect the licensing boundaries and include appropriate MIT license headers in SDK packages (`client-ts`, `react`).
 
 ## AI-Assisted Development Notes
 
