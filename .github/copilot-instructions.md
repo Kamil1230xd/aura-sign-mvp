@@ -210,9 +210,9 @@ For local development, ensure required services (Postgres, Redis, MinIO) are ava
 
 ## Documentation
 
-- Developer guide: `docs/README_DEV.md`
-- Security documentation: `docs/security/README.md`
-- Runbooks: `docs/runbooks/DR_RUNBOOK.md`
+- Deployment quickstart: `docs/ops/quickstart_deploy.md`
+- Staging deployment plan: `docs/ops/staging_deployment_plan.md`
+- Main README: `README.md`
 
 ## Common Pitfalls to Avoid
 
