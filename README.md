@@ -101,11 +101,14 @@ pnpm lint
 # Type check across monorepo
 pnpm type-check
 
-# Run tests (unit)
+# Run all tests (unit + e2e)
 pnpm test
 
-# Run e2e (if configured)
-pnpm --filter demo-site test:e2e
+# Run only unit tests
+pnpm test:unit
+
+# Run only E2E tests
+pnpm test:e2e
 ```
 
 ---
@@ -163,6 +166,7 @@ Add secret scanning in CI (gitleaks/trufflehog). See `docs/security/` for automa
 ## Further docs
 
 - **Developer guide:** `docs/README_DEV.md`
+- **Testing guide:** `docs/TESTING.md`
 - **Security & audits:** `docs/security/README.md`
 - **Runbooks / DR:** `docs/runbooks/DR_RUNBOOK.md`
 

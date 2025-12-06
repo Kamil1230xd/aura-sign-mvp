@@ -8,7 +8,8 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "echo 'No tests yet for trustmath package'"
   },
   "dependencies": {
     "prom-client": "^15.1.0"

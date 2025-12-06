@@ -8,17 +8,23 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@aura-sign/client": "workspace:*",
     "ethers": "^6.8.0"
   },
   "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/react-hooks": "^8.0.1",
     "@types/node": "^20.10.0",
     "@types/react": "^18.2.0",
+    "happy-dom": "^20.0.11",
     "react": "^18.2.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "vitest": "^4.0.15"
   },
   "peerDependencies": {
     "react": ">=18.0.0"
