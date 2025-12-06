@@ -112,11 +112,11 @@ pnpm type-check
 # Clean build artifacts
 pnpm clean
 
-# Run tests
-pnpm test
+# Run e2e tests (web app)
+pnpm --filter web test:e2e
 
-# Run e2e tests (demo-site)
-pnpm --filter demo-site test:e2e
+# Run e2e tests with UI
+pnpm --filter web test:e2e:ui
 ```
 
 ## Security Guidelines
@@ -188,7 +188,8 @@ EMBEDDING_API=http://localhost:4001
 - Write tests alongside the code they test
 - Use consistent test file naming: `*.test.ts` or `*.spec.ts`
 - Follow existing test patterns in the repository
-- Ensure all tests pass before committing: `pnpm test`
+- Run e2e tests before committing: `pnpm --filter web test:e2e`
+- The web app uses Playwright for end-to-end testing
 
 ## Contributing Guidelines
 
@@ -205,9 +206,6 @@ The project uses Docker Compose for local infrastructure:
 ```bash
 # Start local infrastructure (Postgres, MinIO, Redis)
 docker-compose up -d
-
-# Run migrations (if applicable)
-pnpm migrate
 
 # Monitoring stack (Prometheus, Grafana)
 docker-compose -f docker-compose.ops.yml up -d
