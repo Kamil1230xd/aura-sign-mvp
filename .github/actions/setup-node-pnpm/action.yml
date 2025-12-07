@@ -1,0 +1,69 @@
+name: 'setup-node-pnpm'
+description: 'Composite action: Setup Node + pnpm, optional registry auth and optionally install deps (cross-platform)'
+author: 'Aura Architect'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '20'
+  pnpm-version:
+    description: 'pnpm version to use'
+    required: false
+    default: '8'
+  install-deps:
+    description: 'Whether to install dependencies with pnpm install --frozen-lockfile'
+    required: false
+    default: 'true'
+  registry-url:
+    description: 'Optional registry URL for authentication (e.g., https://registry.npmjs.org/)'
+    required: false
+    default: ''
+  cache:
+    description: 'Enable caching for pnpm store and node_modules'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: ${{ inputs.pnpm-version }}
+
+    # Note: Multiple conditional steps are used instead of one step with dynamic inputs
+    # because GitHub Actions composite actions don't support conditional parameters in 'with' blocks.
+    # This is the recommended pattern for handling optional parameters.
+    - name: Setup Node.js (with cache)
+      if: inputs.cache == 'true' && inputs.registry-url == ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+
+    - name: Setup Node.js (with cache and registry)
+      if: inputs.cache == 'true' && inputs.registry-url != ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Setup Node.js (without cache)
+      if: inputs.cache == 'false' && inputs.registry-url == ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Setup Node.js (without cache, with registry)
+      if: inputs.cache == 'false' && inputs.registry-url != ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Install dependencies
+      if: inputs.install-deps == 'true'
+      shell: bash
+      run: pnpm install --frozen-lockfile
