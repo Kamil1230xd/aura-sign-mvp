@@ -15,7 +15,8 @@
     "demo": "pnpm --filter demo-site dev",
     "test": "pnpm -r test",
     "test:e2e": "pnpm --filter web test:e2e",
-    "test:unit": "pnpm -r --filter './packages/*' test"
+    "test:unit": "pnpm -r --filter './packages/*' test",
+    "ci": "pnpm install && pnpm lint && pnpm type-check && pnpm test:unit && pnpm --filter web test:e2e"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
