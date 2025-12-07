@@ -30,6 +30,8 @@ jobs:
   e2e:
     runs-on: ubuntu-latest
     needs: setup
+    permissions:
+      contents: read
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - uses: actions/checkout@v4
@@ -41,20 +43,34 @@ jobs:
         if: hashFiles('docker-compose.yml') != ''
         run: |
           docker compose up -d
-          # wait for services to become healthy
+          # Wait for services to be running and healthy
+          # Note: This checks 'running' status first, then 'healthy' if healthchecks are defined
           sleep 5
           # Get total number of services defined
           TOTAL_SERVICES=$(docker compose config --services | wc -l)
           for i in {1..30}; do
             RUNNING_SERVICES=$(docker compose ps --status running --quiet | wc -l)
             if [[ "$RUNNING_SERVICES" -eq "$TOTAL_SERVICES" ]]; then
-              echo "All $TOTAL_SERVICES service(s) are running"
-              exit 0
+              # All services are running, check if any have health checks
+              HEALTHY_SERVICES=$(docker compose ps --status healthy --quiet 2>/dev/null | wc -l)
+              if [[ "$HEALTHY_SERVICES" -gt 0 ]]; then
+                # Some services have health checks, verify all with healthchecks are healthy
+                if [[ "$HEALTHY_SERVICES" -eq "$RUNNING_SERVICES" ]]; then
+                  echo "All $TOTAL_SERVICES service(s) are running and healthy"
+                  exit 0
+                fi
+                echo "Waiting for health checks... ($HEALTHY_SERVICES/$RUNNING_SERVICES healthy, attempt $i/30)"
+              else
+                # No health checks defined, running is sufficient
+                echo "All $TOTAL_SERVICES service(s) are running"
+                exit 0
+              fi
+            else
+              echo "Waiting for services... ($RUNNING_SERVICES/$TOTAL_SERVICES running, attempt $i/30)"
             fi
-            echo "Waiting for services... ($RUNNING_SERVICES/$TOTAL_SERVICES running, attempt $i/30)"
             sleep 2
           done
-          echo "ERROR: Not all services started within timeout"
+          echo "ERROR: Services did not become ready within timeout"
           docker compose ps
           docker compose logs
           exit 1
@@ -67,6 +83,8 @@ jobs:
   security-audit:
     runs-on: ubuntu-latest
     needs: setup
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
