@@ -40,7 +40,7 @@ jobs:
 
       - name: set-id
         id: set-id
-        run: echo "::set-output name=id::configured"
+        run: echo "id=configured" >> $GITHUB_OUTPUT
 
   # Job 2: E2E tests (runs after configure). Conditional execution for PRs from forks is handled.
   e2e:
@@ -59,11 +59,12 @@ jobs:
         with:
           node-version: '20'
           pnpm-version: '8'
-          install-deps: 'false'
+          install-deps: 'true'
           frozen: 'true'
 
       - name: Bring up infra (docker compose)
         id: compose
+        if: hashFiles('docker-compose.yml') != ''
         run: |
           set -euo pipefail
           # Use Docker Compose plugin; fallback to docker-compose if plugin missing
@@ -98,7 +99,7 @@ jobs:
         run: pnpm --filter web test:e2e
 
       - name: Tear down infra
-        if: always()
+        if: always() && hashFiles('docker-compose.yml') != ''
         run: |
           if command -v docker compose >/dev/null 2>&1; then
             docker compose down --volumes --remove-orphans || true
@@ -120,7 +121,7 @@ jobs:
         with:
           node-version: '20'
           pnpm-version: '8'
-          install-deps: 'false'
+          install-deps: 'true'
           frozen: 'true'
 
       - name: pnpm audit (low/medium)
@@ -134,8 +135,8 @@ jobs:
           args: --redact
 
       - name: CodeQL Analysis
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: javascript
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
