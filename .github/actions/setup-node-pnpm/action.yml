@@ -1,0 +1,66 @@
+name: 'setup-node-pnpm'
+description: 'Reusable action: configure Node.js and pnpm, optionally install deps'
+inputs:
+  node-version:
+    description: 'Node.js version to setup'
+    required: false
+    default: '20'
+  pnpm-version:
+    description: 'pnpm version to setup'
+    required: false
+    default: '8'
+  install-deps:
+    description: 'Install dependencies (pnpm install --frozen)'
+    required: false
+    default: 'true'
+  registry-url:
+    description: 'Optional registry url (for private registries)'
+    required: false
+    default: ''
+  cache:
+    description: 'Enable pnpm store caching (true|false)'
+    required: false
+    default: 'true'
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: ${{ inputs.pnpm-version }}
+
+    - name: Configure git (minimal)
+      shell: bash
+      run: |
+        git config --global --add safe.directory $GITHUB_WORKSPACE || true
+
+    - name: Setup pnpm store cache (actions/cache)
+      if: ${{ inputs.cache == 'true' }}
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.pnpm-store
+          ~/.cache/pnpm
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-
+
+    - name: Install dependencies (optional)
+      if: ${{ inputs.install-deps == 'true' }}
+      shell: bash
+      run: |
+        pnpm fetch --prod || true
+        pnpm install --frozen --reporter=append-only
+
+    - name: Output environment
+      shell: bash
+      run: |
+        echo "node: $(node -v)"
+        echo "pnpm: $(pnpm -v)"
