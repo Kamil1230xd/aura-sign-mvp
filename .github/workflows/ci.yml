@@ -53,13 +53,15 @@ jobs:
             if [[ "$RUNNING_SERVICES" -eq "$TOTAL_SERVICES" ]]; then
               # All services are running, check if any have health checks
               HEALTHY_SERVICES=$(docker compose ps --status healthy --quiet 2>/dev/null | wc -l)
-              if [[ "$HEALTHY_SERVICES" -gt 0 ]]; then
-                # Some services have health checks, verify all with healthchecks are healthy
-                if [[ "$HEALTHY_SERVICES" -eq "$RUNNING_SERVICES" ]]; then
-                  echo "All $TOTAL_SERVICES service(s) are running and healthy"
-                  exit 0
-                fi
-                echo "Waiting for health checks... ($HEALTHY_SERVICES/$RUNNING_SERVICES healthy, attempt $i/30)"
+              UNHEALTHY_SERVICES=$(docker compose ps --status unhealthy --quiet 2>/dev/null | wc -l)
+              
+              if [[ "$UNHEALTHY_SERVICES" -gt 0 ]]; then
+                # Some services are explicitly unhealthy, keep waiting
+                echo "Waiting for health checks... ($HEALTHY_SERVICES healthy, $UNHEALTHY_SERVICES unhealthy, attempt $i/30)"
+              elif [[ "$HEALTHY_SERVICES" -gt 0 ]]; then
+                # Some services have health checks and all are healthy (none unhealthy)
+                echo "All $TOTAL_SERVICES service(s) are running and healthy"
+                exit 0
               else
                 # No health checks defined, running is sufficient
                 echo "All $TOTAL_SERVICES service(s) are running"
