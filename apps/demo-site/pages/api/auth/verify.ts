@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { auraAuth, getSession } from '@aura-sign/next-auth';
+import { validateMethod, getSessionConfig, handleApiError } from '../../../lib/apiUtils';
 
 interface VerifyRequest {
   message: string;
@@ -10,9 +11,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (!validateMethod(req, res, 'POST')) return;
 
   try {
     const { message, signature } = req.body as VerifyRequest;
@@ -33,10 +32,7 @@ export default async function handler(
     }
 
     // Get session
-    const config = {
-      secret: process.env.IRON_SESSION_SECRET || 'default-secret-change-me',
-    };
-
+    const config = getSessionConfig();
     const session = await getSession(req as any, res as any, config);
     
     // Update session with authentication
@@ -51,10 +47,6 @@ export default async function handler(
       },
     });
   } catch (error) {
-    console.error('Verification error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Verification failed' 
-    });
+    handleApiError(res, error, 'Verification error');
   }
 }

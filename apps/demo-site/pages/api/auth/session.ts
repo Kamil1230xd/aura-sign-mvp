@@ -1,19 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from '@aura-sign/next-auth';
+import { validateMethod, getSessionConfig, handleApiError } from '../../../lib/apiUtils';
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (!validateMethod(req, res, 'GET')) return;
 
   try {
-    const config = {
-      secret: process.env.IRON_SESSION_SECRET || 'default-secret-change-me',
-    };
-
+    const config = getSessionConfig();
     const session = await getSession(req as any, res as any, config);
 
     res.status(200).json({
@@ -22,7 +18,6 @@ export default async function handler(
       isAuthenticated: !!session.isAuthenticated,
     });
   } catch (error) {
-    console.error('Session error:', error);
-    res.status(500).json({ error: 'Failed to get session' });
+    handleApiError(res, error, 'Session error');
   }
 }
