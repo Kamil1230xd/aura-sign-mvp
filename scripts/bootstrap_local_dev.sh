@@ -21,8 +21,8 @@ if [[ "$create" =~ ^(Y|y|)$ ]]; then
   cat > "$ENV_FILE" <<EOF
 DATABASE_URL=postgresql://aura_user:aura_pass@localhost:5432/aura
 NEXT_PUBLIC_APP_NAME=Aura-Sign-Local
-SESSION_SECRET=$(head -c 32 /dev/urandom | base64 -w 0)
-IRON_SESSION_PASSWORD=$(head -c 32 /dev/urandom | base64 -w 0)
+SESSION_SECRET=$(openssl rand -base64 32 | tr -d '\n')
+IRON_SESSION_PASSWORD=$(openssl rand -base64 32 | tr -d '\n')
 MINIO_ENDPOINT=http://localhost:9000
 MINIO_ACCESS_KEY=minio
 MINIO_SECRET_KEY=minio123
