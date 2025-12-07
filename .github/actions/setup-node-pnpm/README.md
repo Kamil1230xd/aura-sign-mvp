@@ -83,16 +83,12 @@ See [example-composite-action.yml](../../workflows/example-composite-action.yml)
 
 ## Caching Strategy
 
-When caching is enabled, this action caches:
-- `~/.pnpm-store` - Global pnpm store
-- `~/.pnpm-store/v3` - pnpm store v3
-- `.pnpm-store` - Local pnpm store
-- `node_modules` - Project dependencies
+When caching is enabled (`cache: 'true'`), this action uses `actions/setup-node@v4`'s built-in pnpm caching mechanism, which automatically:
+- Caches the pnpm store based on the lock file
+- Provides optimal cache performance across different operating systems
+- Handles cache invalidation when dependencies change
 
-Cache key is based on:
-- Operating system
-- `pnpm-lock.yaml` hash
-- `package.json` hash
+The caching is managed by GitHub Actions' native caching for pnpm, which is more efficient and reliable than manual cache management.
 
 ## Why Use This Action?
 
@@ -100,21 +96,13 @@ Cache key is based on:
 
 ```yaml
 - uses: actions/checkout@v4
+- uses: pnpm/action-setup@v2
+  with:
+    version: 8
 - uses: actions/setup-node@v4
   with:
     node-version: 20
     cache: 'pnpm'
-- uses: pnpm/action-setup@v2
-  with:
-    version: 8
-- uses: actions/cache@v4
-  with:
-    path: |
-      ~/.pnpm-store
-      ~/.pnpm-store/v3
-      .pnpm-store
-      node_modules
-    key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
 - run: pnpm install --frozen-lockfile
 ```
 

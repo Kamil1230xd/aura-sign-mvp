@@ -27,30 +27,38 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup Node.js
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: ${{ inputs.pnpm-version }}
+
+    - name: Setup Node.js (with cache)
+      if: inputs.cache == 'true' && inputs.registry-url == ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+
+    - name: Setup Node.js (with cache and registry)
+      if: inputs.cache == 'true' && inputs.registry-url != ''
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
         cache: 'pnpm'
         registry-url: ${{ inputs.registry-url }}
 
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v2
+    - name: Setup Node.js (without cache)
+      if: inputs.cache == 'false' && inputs.registry-url == ''
+      uses: actions/setup-node@v4
       with:
-        version: ${{ inputs.pnpm-version }}
+        node-version: ${{ inputs.node-version }}
 
-    - name: Cache pnpm store and node_modules
-      if: inputs.cache == 'true'
-      uses: actions/cache@v4
+    - name: Setup Node.js (without cache, with registry)
+      if: inputs.cache == 'false' && inputs.registry-url != ''
+      uses: actions/setup-node@v4
       with:
-        path: |
-          ~/.pnpm-store
-          ~/.pnpm-store/v3
-          .pnpm-store
-          node_modules
-        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/package.json') }}
-        restore-keys: |
-          ${{ runner.os }}-pnpm-
+        node-version: ${{ inputs.node-version }}
+        registry-url: ${{ inputs.registry-url }}
 
     - name: Install dependencies
       if: inputs.install-deps == 'true'
