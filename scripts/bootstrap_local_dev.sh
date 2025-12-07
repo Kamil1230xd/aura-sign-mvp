@@ -21,8 +21,8 @@ if [[ "$create" =~ ^(Y|y|)$ ]]; then
   cat > "$ENV_FILE" <<EOF
 DATABASE_URL=postgresql://aura_user:aura_pass@localhost:5432/aura
 NEXT_PUBLIC_APP_NAME=Aura-Sign-Local
-SESSION_SECRET=$(head -c 32 /dev/urandom | base64)
-IRON_SESSION_PASSWORD=$(head -c 32 /dev/urandom | base64)
+SESSION_SECRET=$(head -c 32 /dev/urandom | base64 -w 0)
+IRON_SESSION_PASSWORD=$(head -c 32 /dev/urandom | base64 -w 0)
 MINIO_ENDPOINT=http://localhost:9000
 MINIO_ACCESS_KEY=minio
 MINIO_SECRET_KEY=minio123
@@ -36,9 +36,23 @@ echo "Bringing up docker services..."
 if [ -f docker-compose.yml ]; then
   docker compose up -d
   echo "Waiting for Postgres..."
-  until docker exec "$(docker ps -q -f label=com.docker.compose.service=postgres)" pg_isready -U aura_user >/dev/null 2>&1; do
+  POSTGRES_CONTAINER=""
+  for _ in {1..30}; do
+    POSTGRES_CONTAINER=$(docker ps -q -f label=com.docker.compose.service=postgres)
+    if [ -n "$POSTGRES_CONTAINER" ]; then
+      break
+    fi
     sleep 1
   done
+  
+  if [ -z "$POSTGRES_CONTAINER" ]; then
+    echo "Warning: Postgres container not found, skipping readiness check"
+  else
+    until docker exec "$POSTGRES_CONTAINER" pg_isready -U aura_user >/dev/null 2>&1; do
+      sleep 1
+    done
+    echo "Postgres is ready"
+  fi
 else
   echo "No docker-compose.yml present - skip bringing up infra"
 fi
