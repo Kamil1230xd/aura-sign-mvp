@@ -6,25 +6,46 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   setup:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
+      packages: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Use Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: 'pnpm'
 
-      - uses: pnpm/action-setup@v2
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
         with:
           version: 8
 
-      - name: Install
-        run: pnpm install
+      - name: Cache pnpm store and node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pnpm-store
+            ~/.pnpm-store/v3
+            .pnpm-store
+            node_modules
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
         run: pnpm lint
@@ -35,8 +56,85 @@ jobs:
       - name: Unit tests
         run: pnpm test:unit
 
-      - name: E2E tests (optional)
-        run: pnpm test:e2e
+      - name: Upload unit test artifacts (coverage/test results)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-results
+          path: |
+            coverage
+            test-results
+            junit.xml
 
-      - name: Security audit
-        run: pnpm audit --level=moderate || true
+  e2e:
+    runs-on: ubuntu-latest
+    needs: setup
+    # run e2e on push, or on PRs when the PR branch is in the same repo (fork-protection)
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Start infra (docker-compose) if file exists
+        if: ${{ hashFiles('docker-compose.yml') != '' }}
+        run: |
+          docker-compose up -d
+          # wait for a service to respond on port 3000 (adjust path/port if needed)
+          for i in {1..30}; do
+            if curl -sSf http://localhost:3000/healthz >/dev/null 2>&1 || curl -sSf http://localhost:3000/ >/dev/null 2>&1; then
+              echo "service up"
+              break
+            fi
+            echo "waiting for service... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+        env:
+          API_BASE_URL: http://localhost:3000
+
+      - name: Upload e2e artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: |
+            e2e-report
+            test-results
+            junit-e2e.xml
+
+  security-audit:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: PNPM Audit (save JSON report)
+        run: pnpm audit --json > pnpm-audit.json || true
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pnpm-audit
+          path: pnpm-audit.json
+
+      - name: Secret scan (gitleaks)
+        uses: zricethezav/gitleaks-action@v2
+        with:
+          args: --redact
+        continue-on-error: true
