@@ -46,7 +46,7 @@ jobs:
           # wait for services to become healthy
           sleep 5
           for i in {1..30}; do
-            if docker compose ps --status running | grep -q running; then
+            if [[ -n "$(docker compose ps --status running --quiet)" ]]; then
               echo "Services are running"
               exit 0
             fi
@@ -72,7 +72,7 @@ jobs:
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
         with:
-          install-deps: 'false'
+          install-deps: false
 
       - name: PNPM Audit
         run: pnpm audit --level=moderate || true
