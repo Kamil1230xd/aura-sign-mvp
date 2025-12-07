@@ -55,3 +55,6 @@ temp/
 # Backup files
 *.backup
 *.bak
+
+# Monolith build output
+monolith/
