@@ -1,0 +1,58 @@
+name: 'setup-node-pnpm'
+description: 'Composite action: Setup Node + pnpm, optional registry auth and optionally install deps (cross-platform)'
+author: 'Aura Architect'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '20'
+  pnpm-version:
+    description: 'pnpm version to use'
+    required: false
+    default: '8'
+  install-deps:
+    description: 'Whether to install dependencies with pnpm install --frozen-lockfile'
+    required: false
+    default: 'true'
+  registry-url:
+    description: 'Optional registry URL for authentication (e.g., https://registry.npmjs.org/)'
+    required: false
+    default: ''
+  cache:
+    description: 'Enable caching for pnpm store and node_modules'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: ${{ inputs.pnpm-version }}
+
+    - name: Cache pnpm store and node_modules
+      if: inputs.cache == 'true'
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.pnpm-store
+          ~/.pnpm-store/v3
+          .pnpm-store
+          node_modules
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('**/package.json') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-
+
+    - name: Install dependencies
+      if: inputs.install-deps == 'true'
+      shell: bash
+      run: pnpm install --frozen-lockfile

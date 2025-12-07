@@ -1,0 +1,107 @@
+name: Example - Composite Action Usage
+
+# This workflow demonstrates how to use the setup-node-pnpm composite action
+# It shows various usage patterns: with defaults, without install, with custom versions
+
+on:
+  workflow_dispatch: # Manual trigger for testing
+  pull_request:
+    paths:
+      - '.github/actions/setup-node-pnpm/**'
+      - '.github/workflows/example-composite-action.yml'
+
+jobs:
+  # Example 1: Use with default settings (Node 20, pnpm 8, auto-install)
+  example-default:
+    name: Default Setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node + pnpm (defaults)
+        uses: ./.github/actions/setup-node-pnpm
+
+      - name: Verify installation
+        run: |
+          node --version
+          pnpm --version
+          pnpm list --depth=0
+
+  # Example 2: Custom versions without auto-install
+  example-custom-versions:
+    name: Custom Versions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 18 + pnpm 9
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          node-version: '18'
+          pnpm-version: '9'
+          install-deps: 'false'
+
+      - name: Verify versions
+        run: |
+          node --version
+          pnpm --version
+
+      - name: Manual install with custom flags
+        run: pnpm install --no-frozen-lockfile
+
+  # Example 3: With registry authentication (for publishing)
+  example-with-registry:
+    name: With Registry Auth
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup with npm registry
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          registry-url: 'https://registry.npmjs.org/'
+          install-deps: 'true'
+
+      - name: Verify setup
+        run: |
+          node --version
+          pnpm --version
+          echo "Registry configured for publishing"
+
+  # Example 4: Without caching (for comparison)
+  example-no-cache:
+    name: Without Cache
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup without cache
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          cache: 'false'
+
+      - name: Run build
+        run: pnpm run build
+
+  # Example 5: Multi-OS compatibility test
+  example-cross-platform:
+    name: Cross-Platform (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node + pnpm
+        uses: ./.github/actions/setup-node-pnpm
+
+      - name: Verify on ${{ matrix.os }}
+        run: |
+          node --version
+          pnpm --version
