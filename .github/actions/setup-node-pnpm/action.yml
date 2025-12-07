@@ -32,6 +32,9 @@ runs:
       with:
         version: ${{ inputs.pnpm-version }}
 
+    # Note: Multiple conditional steps are used instead of one step with dynamic inputs
+    # because GitHub Actions composite actions don't support conditional parameters in 'with' blocks.
+    # This is the recommended pattern for handling optional parameters.
     - name: Setup Node.js (with cache)
       if: inputs.cache == 'true' && inputs.registry-url == ''
       uses: actions/setup-node@v4
