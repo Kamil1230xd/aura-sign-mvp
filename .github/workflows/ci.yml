@@ -77,17 +77,17 @@ jobs:
           echo "Starting infra via $DC"
           $DC up -d || { echo "docker compose up failed"; $DC ps || true; $DC logs || true; exit 1; }
 
-          # Wait for services to be healthy if they expose HEALTHCHECK
-          echo "Waiting for healthy services (timeout 2m)..."
+          # Wait for services to be ready (timeout 2m)
+          echo "Waiting for services to be ready (timeout 2m)..."
           DEADLINE=$((SECONDS + 120))
           while [ $SECONDS -lt $DEADLINE ]; do
-            HEALTHY=true
-            for cid in $($DC ps -q); do
-              if $DC ps --format '{{.State}} {{.Names}}' | grep -q "starting"; then
-                HEALTHY=false
-              fi
-            done
-            $HEALTHY && break || sleep 2
+            # Check if any containers are still starting
+            if ! $DC ps --format '{{.State}}' | grep -q "starting"; then
+              echo "All services ready"
+              break
+            fi
+            echo "Services still starting..."
+            sleep 2
           done || true
 
           echo "Services started. Listing:"

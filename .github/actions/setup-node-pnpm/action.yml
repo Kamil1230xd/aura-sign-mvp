@@ -30,11 +30,32 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Setup Node.js
+    - name: Setup Node.js (with cache)
+      if: inputs.cache == 'true' && inputs.registry-url == ''
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: ${{ inputs.cache == 'true' && 'pnpm' || '' }}
+        cache: 'pnpm'
+
+    - name: Setup Node.js (with cache and registry)
+      if: inputs.cache == 'true' && inputs.registry-url != ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+        registry-url: ${{ inputs.registry-url }}
+
+    - name: Setup Node.js (no cache)
+      if: inputs.cache != 'true' && inputs.registry-url == ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Setup Node.js (no cache, with registry)
+      if: inputs.cache != 'true' && inputs.registry-url != ''
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
         registry-url: ${{ inputs.registry-url }}
 
     - name: Setup pnpm
