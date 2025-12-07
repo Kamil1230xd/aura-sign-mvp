@@ -57,9 +57,9 @@ docker compose up -d
 echo "Installing deps..."
 pnpm install
 
-echo "Generate prisma client & seed"
+echo "Generate prisma client & seed..."
 pnpm --filter @aura-sign/database-client prisma generate
-pnpm --filter @aura-sign/database-client prisma db push --preview-feature
+pnpm --filter @aura-sign/database-client prisma db push
 pnpm --filter @aura-sign/database-client prisma:seed
 
 echo "Ready. Run 'pnpm dev' to start monorepo."
