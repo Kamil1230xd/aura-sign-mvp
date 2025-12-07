@@ -45,15 +45,18 @@ jobs:
           docker compose up -d
           # wait for services to become healthy
           sleep 5
+          # Get total number of services defined
+          TOTAL_SERVICES=$(docker compose config --services | wc -l)
           for i in {1..30}; do
-            if [[ -n "$(docker compose ps --status running --quiet)" ]]; then
-              echo "Services are running"
+            RUNNING_SERVICES=$(docker compose ps --status running --quiet | wc -l)
+            if [[ "$RUNNING_SERVICES" -eq "$TOTAL_SERVICES" ]]; then
+              echo "All $TOTAL_SERVICES service(s) are running"
               exit 0
             fi
-            echo "Waiting for services... ($i/30)"
+            echo "Waiting for services... ($RUNNING_SERVICES/$TOTAL_SERVICES running, attempt $i/30)"
             sleep 2
           done
-          echo "ERROR: Services failed to start within timeout"
+          echo "ERROR: Not all services started within timeout"
           docker compose ps
           docker compose logs
           exit 1
