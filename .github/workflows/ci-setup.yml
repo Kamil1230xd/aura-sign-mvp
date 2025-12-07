@@ -1,0 +1,25 @@
+name: CI - Setup Node & pnpm
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (optional)
+        uses: actions/checkout@v4
+
+      - name: Use local setup-node-pnpm composite action
+        id: setup
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          node-version: '20'
+          pnpm-version: '8'
+          install-deps: 'false'
+          cache: 'true'
+
+      - name: Show outputs from composite action
+        run: |
+          echo "Node version reported by action: ${{ steps.setup.outputs.node-version }}"
+          echo "pnpm version reported by action: ${{ steps.setup.outputs.pnpm-version }}"
