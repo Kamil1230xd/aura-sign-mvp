@@ -39,12 +39,20 @@ jobs:
       - name: Setup Node.js and pnpm
         uses: ./.github/actions/setup-node-pnpm
 
-      - name: Start infra (docker-compose)
+      - name: Start infra (docker compose)
         if: hashFiles('docker-compose.yml') != ''
         run: |
-          docker-compose up -d
+          docker compose up -d
           # wait for services to become healthy
-          n=0; until [ $n -ge 30 ] ; do docker-compose ps && break || sleep 2; n=$((n+1)); done
+          sleep 5
+          for i in {1..30}; do
+            if docker compose ps --status running | grep -q running; then
+              echo "Services are running"
+              break
+            fi
+            echo "Waiting for services... ($i/30)"
+            sleep 2
+          done
 
       - name: Run E2E tests
         run: pnpm test:e2e
