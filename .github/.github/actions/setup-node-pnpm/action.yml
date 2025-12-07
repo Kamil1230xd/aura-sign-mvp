@@ -1,0 +1,36 @@
+name: "setup-node-pnpm"
+description: "Composite action to setup Node.js and pnpm consistently"
+inputs:
+  node-version:
+    description: "Node.js version"
+    required: false
+    default: "20"
+  pnpm-version:
+    description: "pnpm version"
+    required: false
+    default: "8"
+  install-deps:
+    description: "Install project dependencies"
+    required: false
+    default: "true"
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: ${{ inputs.pnpm-version }}
+    - name: Use cache for pnpm store
+      uses: actions/cache@v4
+      with:
+        path: ~/.pnpm-store
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          pnpm-store-${{ runner.os }}-
+    - name: Install dependencies (optional)
+      if: ${{ inputs.install-deps == 'true' }}
+      run: pnpm install --frozen
