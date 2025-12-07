@@ -43,6 +43,19 @@ Aura-Sign MVP provides wallet-based authentication (SIWE) and modular building b
 
 > Node / pnpm versions: **Node 20+**, **pnpm 8+** recommended.
 
+### Option 1: Automated Bootstrap (Recommended)
+
+```bash
+# Clone and run bootstrap script
+git clone https://github.com/Kamil1230xd/aura-sign-mvp.git
+cd aura-sign-mvp
+./scripts/bootstrap_local_dev.sh
+```
+
+The bootstrap script handles dependencies, environment setup, database initialization, and more.
+
+### Option 2: Manual Setup
+
 ```bash
 # 1) Install dependencies
 pnpm install

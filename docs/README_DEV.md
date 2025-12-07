@@ -49,6 +49,27 @@ Before you begin, ensure you have the following installed:
 
 ## Initial Setup
 
+### Option A: Automated Bootstrap (Recommended)
+
+Use the bootstrap script for a guided setup experience:
+
+```bash
+git clone https://github.com/Kamil1230xd/aura-sign-mvp.git
+cd aura-sign-mvp
+./scripts/bootstrap_local_dev.sh
+```
+
+This script will:
+- Check for pnpm installation
+- Create `.env.local` with your configuration
+- Start Docker services (PostgreSQL, Redis, MinIO)
+- Install dependencies
+- Generate Prisma client
+- Push database schema
+- Seed the database
+
+### Option B: Manual Setup
+
 ### 1. Clone the Repository
 
 ```bash
