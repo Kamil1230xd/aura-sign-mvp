@@ -61,11 +61,12 @@ cd aura-sign-mvp
 
 This script will:
 - Check for pnpm installation
-- Create `.env.local` with your configuration
-- Start Docker services (PostgreSQL, Redis, MinIO)
+- Backup existing `.env.local` if present
+- Auto-generate secure secrets and create `.env.local` with sane defaults
+- Start Docker services (PostgreSQL, Redis, MinIO) and wait for Postgres readiness
 - Install dependencies
 - Generate Prisma client
-- Push database schema
+- Run database migrations
 - Seed the database
 
 ### Option B: Manual Setup
