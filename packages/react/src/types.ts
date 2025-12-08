@@ -1,3 +1,4 @@
+// License: MIT. See .github/LICENSES/LICENSE_SDK.md
 import type { AuraSession } from '@aura-sign/client';
 
 export interface AuraUser extends AuraSession {

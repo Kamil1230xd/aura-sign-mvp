@@ -1,0 +1,105 @@
+name: Example - Composite Action Usage
+
+on:
+  workflow_dispatch:
+  # Uncomment to run on push/PR (for testing purposes)
+  # push:
+  #   branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  # Example 1: Using all defaults
+  example-defaults:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup with defaults
+        uses: ./.github/actions/setup-node-pnpm
+      
+      - name: Verify setup
+        run: |
+          node --version
+          pnpm --version
+          pnpm list --depth=0
+
+  # Example 2: Custom Node and pnpm versions
+  example-custom-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup with custom versions
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          node-version: '18'
+          pnpm-version: '9'
+      
+      - name: Verify versions
+        run: |
+          node --version | grep "v18"
+          pnpm --version | grep "9"
+
+  # Example 3: Skip dependency installation
+  example-no-install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup without installing deps
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install-deps: 'false'
+      
+      - name: Install specific packages manually
+        run: pnpm add -g turbo
+
+  # Example 4: With custom registry (for private packages)
+  example-custom-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup with custom registry
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build
+        run: pnpm build
+
+  # Example 5: Disable caching (for troubleshooting)
+  example-no-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup without cache
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          cache: 'false'
+      
+      - name: Fresh install every time
+        run: pnpm install --frozen
+
+  # Example 6: Cross-platform usage
+  example-cross-platform:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node and pnpm
+        uses: ./.github/actions/setup-node-pnpm
+      
+      - name: Verify cross-platform
+        run: |
+          echo "Running on ${{ matrix.os }}"
+          node --version
+          pnpm --version

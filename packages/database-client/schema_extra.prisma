@@ -1,0 +1,29 @@
+// Prisma schema extensions for pgvector support
+// These model snippets should be integrated into the main schema.prisma file
+// The ai_embedding field uses Unsupported("vector") type for pgvector compatibility
+
+// Note: pgvector extension must be enabled in PostgreSQL:
+// CREATE EXTENSION IF NOT EXISTS vector;
+
+model identity {
+  address       String   @id
+  ai_embedding  Unsupported("vector(1536)")?  // OpenAI ada-002 embedding dimension
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  
+  @@index([ai_embedding], type: Ivfflat)  // HNSW or IVFFlat index for vector search
+}
+
+model trust_event {
+  id            String   @id @default(uuid())
+  from_address  String
+  to_address    String
+  trust_score   Float
+  ai_embedding  Unsupported("vector(1536)")?  // Optional embedding for trust event context
+  event_type    String
+  created_at    DateTime @default(now())
+  
+  @@index([from_address])
+  @@index([to_address])
+  @@index([ai_embedding], type: Ivfflat)
+}

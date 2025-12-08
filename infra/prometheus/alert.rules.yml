@@ -1,0 +1,122 @@
+# Prometheus alert rules for Aura Sign monitoring
+# These rules define conditions that trigger alerts
+
+groups:
+  - name: aura_sign_alerts
+    interval: 30s
+    rules:
+      # Alert when vector search latency is high
+      - alert: HighVectorSearchLatency
+        expr: |
+          histogram_quantile(0.95, 
+            rate(vector_search_latency_seconds_bucket[5m])
+          ) > 2
+        for: 5m
+        labels:
+          severity: warning
+          component: vector_search
+        annotations:
+          summary: "High vector search latency detected"
+          description: |
+            Vector search P95 latency is {{ $value | humanizeDuration }} 
+            which exceeds the 2 second threshold.
+            Instance: {{ $labels.instance }}
+            Operation: {{ $labels.operation }}
+
+      # Alert when vector search latency is critically high
+      - alert: CriticalVectorSearchLatency
+        expr: |
+          histogram_quantile(0.95, 
+            rate(vector_search_latency_seconds_bucket[5m])
+          ) > 5
+        for: 2m
+        labels:
+          severity: critical
+          component: vector_search
+        annotations:
+          summary: "Critical vector search latency detected"
+          description: |
+            Vector search P95 latency is {{ $value | humanizeDuration }}
+            which exceeds the 5 second critical threshold.
+            Immediate action required.
+            Instance: {{ $labels.instance }}
+            Operation: {{ $labels.operation }}
+
+      # Alert when trustmath run duration is high
+      - alert: TrustmathRunDurationHigh
+        expr: |
+          histogram_quantile(0.95,
+            rate(trustmath_run_duration_seconds_bucket[5m])
+          ) > 10
+        for: 5m
+        labels:
+          severity: warning
+          component: trustmath
+        annotations:
+          summary: "High trustmath calculation duration"
+          description: |
+            Trustmath run P95 duration is {{ $value | humanizeDuration }}
+            which exceeds the 10 second threshold.
+            Instance: {{ $labels.instance }}
+            Type: {{ $labels.type }}
+
+      # Alert when trustmath run duration is critically high
+      - alert: TrustmathRunDurationCritical
+        expr: |
+          histogram_quantile(0.95,
+            rate(trustmath_run_duration_seconds_bucket[5m])
+          ) > 30
+        for: 2m
+        labels:
+          severity: critical
+          component: trustmath
+        annotations:
+          summary: "Critical trustmath calculation duration"
+          description: |
+            Trustmath run P95 duration is {{ $value | humanizeDuration }}
+            which exceeds the 30 second critical threshold.
+            Immediate action required.
+            Instance: {{ $labels.instance }}
+            Type: {{ $labels.type }}
+
+      # Alert for high error rate in trustmath runs
+      - alert: HighTrustmathErrorRate
+        expr: |
+          rate(trustmath_runs_total{status="error"}[5m]) 
+          / 
+          rate(trustmath_runs_total[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          component: trustmath
+        annotations:
+          summary: "High error rate in trustmath calculations"
+          description: |
+            Trustmath error rate is {{ $value | humanizePercentage }}
+            which exceeds 5% threshold.
+            Instance: {{ $labels.instance }}
+
+      # Alert when service is down
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: |
+            Service {{ $labels.job }} on {{ $labels.instance }} 
+            has been down for more than 1 minute.
+
+      # Alert for high memory usage (if default metrics are enabled)
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: |
+            Memory usage is {{ $value }}% on {{ $labels.instance }}
+            which exceeds 90% threshold.

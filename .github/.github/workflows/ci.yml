@@ -1,0 +1,69 @@
+name: CI
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    outputs:
+      configure-id: ${{ steps.set-id.outputs.configure-id }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node & pnpm
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          node-version: '20'
+          pnpm-version: '8'
+          install-deps: 'true'
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm type-check
+      - name: Unit tests
+        run: pnpm test:unit
+      - id: set-id
+        run: echo "::set-output name=configure-id::done"
+
+  e2e:
+    needs: configure
+    runs-on: ubuntu-latest
+    if: github.event.pull_request == null || github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node & pnpm (no install)
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install-deps: 'false'
+      - name: Start dev infra (docker compose)
+        run: |
+          if [ -f docker-compose.yml ]; then
+            docker compose up -d
+            ./scripts/wait-for-services.sh || true
+          else
+            echo "No docker-compose.yml found, skipping infra"
+          fi
+      - name: Run E2E
+        run: pnpm test:e2e
+
+  security:
+    needs: configure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node & pnpm (minimal)
+        uses: ./.github/actions/setup-node-pnpm
+        with:
+          install-deps: 'false'
+      - name: pnpm audit (moderate)
+        run: pnpm audit --level=moderate || true
+      - name: gitleaks scan
+        uses: zricethezav/gitleaks-action@v2.3.9
+        with:
+          args: --redact

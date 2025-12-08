@@ -1,0 +1,38 @@
+// Prisma schema for Aura-Sign MVP
+// Database: PostgreSQL with pgvector extension
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+// Identity model with AI embeddings for similarity search
+model identity {
+  address      String                        @id
+  ai_embedding Unsupported("vector(1536)")?  // OpenAI text-embedding-3-small dimension
+  created_at   DateTime                      @default(now())
+  updated_at   DateTime                      @updatedAt
+
+  @@index([ai_embedding])
+}
+
+// Trust event model with AI embeddings
+model trust_event {
+  id           String                        @id @default(uuid())
+  from_address String
+  to_address   String
+  trust_score  Float
+  ai_embedding Unsupported("vector(1536)")?  // Optional embedding for trust event context
+  event_type   String
+  created_at   DateTime                      @default(now())
+
+  @@index([from_address])
+  @@index([to_address])
+  @@index([ai_embedding])
+}

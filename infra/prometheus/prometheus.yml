@@ -1,0 +1,73 @@
+# Prometheus configuration for Aura Sign monitoring
+# This configuration scrapes metrics from the API and Trustmath worker services
+
+global:
+  scrape_interval: 15s      # How frequently to scrape targets
+  evaluation_interval: 15s  # How frequently to evaluate rules
+  external_labels:
+    cluster: 'aura-sign-mvp'
+    environment: 'production'
+
+# Alertmanager configuration (optional)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - 'alertmanager:9093'
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - 'alert.rules.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Scrape Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Scrape Aura API metrics endpoint
+  - job_name: 'aura_api'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'aura-api:3000'    # Adjust host and port as needed
+        labels:
+          service: 'api'
+          component: 'backend'
+    # Uncomment for basic auth if needed
+    # basic_auth:
+    #   username: 'prometheus'
+    #   password: 'secret'
+
+  # Scrape Trustmath worker metrics endpoint
+  - job_name: 'trustmath_worker'
+    scrape_interval: 10s
+    scrape_timeout: 5s
+    metrics_path: '/metrics'
+    static_configs:
+      - targets:
+          - 'trustmath-worker:3001'    # Adjust host and port as needed
+        labels:
+          service: 'worker'
+          component: 'trustmath'
+    # Uncomment for basic auth if needed
+    # basic_auth:
+    #   username: 'prometheus'
+    #   password: 'secret'
+
+  # Optional: PostgreSQL exporter for database metrics
+  # - job_name: 'postgres'
+  #   static_configs:
+  #     - targets: ['postgres-exporter:9187']
+  #       labels:
+  #         service: 'database'
+
+  # Optional: Node exporter for system metrics
+  # - job_name: 'node'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
+  #       labels:
+  #         service: 'node'

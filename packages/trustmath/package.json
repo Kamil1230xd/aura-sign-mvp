@@ -1,0 +1,21 @@
+{
+  "name": "@aura-sign/trustmath",
+  "version": "0.1.0",
+  "description": "Trust math calculations with Prometheus metrics",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "test": "echo 'No tests yet for trustmath package'"
+  },
+  "dependencies": {
+    "prom-client": "^15.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0"
+  }
+}

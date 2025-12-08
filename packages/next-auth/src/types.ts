@@ -1,3 +1,4 @@
+// License: BSL 1.1. Commercial use prohibited. See .github/LICENSES/LICENSE_CORE.md
 export interface AuraSession {
   address: string;
   chainId: number;

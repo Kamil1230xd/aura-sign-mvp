@@ -1,0 +1,15 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Aura-Sign web application",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.0",
+    "@types/node": "^20.10.0"
+  }
+}
