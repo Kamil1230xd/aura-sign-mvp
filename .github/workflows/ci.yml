@@ -122,9 +122,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for secret scanning
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: PNPM Audit (save JSON report)
         run: pnpm audit --json > pnpm-audit.json || true
+        continue-on-error: true
 
       - name: Upload audit report
         if: always()
@@ -133,8 +141,25 @@ jobs:
           name: pnpm-audit
           path: pnpm-audit.json
 
-      - name: Secret scan (gitleaks)
-        uses: zricethezav/gitleaks-action@v2
+      - name: Secret scan (gitleaks) - REQUIRED
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
         with:
-          args: --redact
-        continue-on-error: true
+          fail-on-severity: moderate
+          comment-summary-in-pr: always

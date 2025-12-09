@@ -9,7 +9,8 @@
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "test": "echo 'No tests yet for database-client package",
+    "lint": "echo 'No linting configured for database-client'",
+    "test": "echo 'No tests yet for database-client package'",
     "prisma:generate": "prisma generate",
     "prisma:seed": "ts-node --transpile-only prisma/seed.ts"
   },

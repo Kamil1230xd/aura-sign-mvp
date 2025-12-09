@@ -8,6 +8,7 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit",
+    "lint": "echo 'No linting configured for react'",
     "clean": "rm -rf dist",
     "test": "vitest run",
     "test:watch": "vitest"

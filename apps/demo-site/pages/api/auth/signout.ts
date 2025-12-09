@@ -14,7 +14,7 @@ export default async function handler(
       secret: process.env.IRON_SESSION_SECRET || 'default-secret-change-me',
     };
 
-    const session = await getSession(req as any, res as any, config);
+    const session = await getSession(req, res, config);
     await auraAuth.signOut(session);
 
     res.status(200).json({ success: true });
