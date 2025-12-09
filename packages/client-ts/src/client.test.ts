@@ -12,7 +12,7 @@ describe('AuraClient', () => {
     vi.clearAllMocks();
     client = new AuraClient({
       baseUrl: 'http://localhost:3000',
-      timeout: 5000
+      timeout: 5000,
     });
   });
 
@@ -23,7 +23,7 @@ describe('AuraClient', () => {
 
     it('should use default timeout if not provided', () => {
       const defaultClient = new AuraClient({
-        baseUrl: 'http://localhost:3000'
+        baseUrl: 'http://localhost:3000',
       });
       expect(defaultClient).toBeInstanceOf(AuraClient);
     });
@@ -34,7 +34,7 @@ describe('AuraClient', () => {
       const mockResponse = { message: 'Sign this message' };
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse
+        json: async () => mockResponse,
       } as Response);
 
       const result = await client.getMessage('0x123', 1);
@@ -44,7 +44,7 @@ describe('AuraClient', () => {
         'http://localhost:3000/api/auth/message',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ address: '0x123', chainId: 1 })
+          body: JSON.stringify({ address: '0x123', chainId: 1 }),
         })
       );
     });
@@ -53,7 +53,7 @@ describe('AuraClient', () => {
       const mockResponse = { message: 'Sign this message' };
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse
+        json: async () => mockResponse,
       } as Response);
 
       await client.getMessage('0x123');
@@ -61,7 +61,7 @@ describe('AuraClient', () => {
       expect(fetch).toHaveBeenCalledWith(
         'http://localhost:3000/api/auth/message',
         expect.objectContaining({
-          body: JSON.stringify({ address: '0x123', chainId: 1 })
+          body: JSON.stringify({ address: '0x123', chainId: 1 }),
         })
       );
     });
@@ -69,7 +69,7 @@ describe('AuraClient', () => {
     it('should throw error on failed request', async () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
-        status: 500
+        status: 500,
       } as Response);
 
       await expect(client.getMessage('0x123')).rejects.toThrow('HTTP error! status: 500');
@@ -83,17 +83,17 @@ describe('AuraClient', () => {
         session: {
           address: '0x123',
           chainId: 1,
-          isAuthenticated: true
-        }
+          isAuthenticated: true,
+        },
       };
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse
+        json: async () => mockResponse,
       } as Response);
 
       const signInRequest = {
         message: 'Sign this message',
-        signature: '0xsignature'
+        signature: '0xsignature',
       };
 
       const result = await client.verify(signInRequest);
@@ -104,7 +104,7 @@ describe('AuraClient', () => {
         'http://localhost:3000/api/auth/verify',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify(signInRequest)
+          body: JSON.stringify(signInRequest),
         })
       );
     });
@@ -112,16 +112,16 @@ describe('AuraClient', () => {
     it('should handle verification failure', async () => {
       const mockResponse = {
         success: false,
-        error: 'Invalid signature'
+        error: 'Invalid signature',
       };
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockResponse
+        json: async () => mockResponse,
       } as Response);
 
       const signInRequest = {
         message: 'Sign this message',
-        signature: '0xbadsignature'
+        signature: '0xbadsignature',
       };
 
       const result = await client.verify(signInRequest);
@@ -136,11 +136,11 @@ describe('AuraClient', () => {
       const mockSession = {
         address: '0x123',
         chainId: 1,
-        isAuthenticated: true
+        isAuthenticated: true,
       };
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockSession
+        json: async () => mockSession,
       } as Response);
 
       const result = await client.getSession();
@@ -152,11 +152,11 @@ describe('AuraClient', () => {
       const mockSession = {
         address: '',
         chainId: 0,
-        isAuthenticated: false
+        isAuthenticated: false,
       };
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockSession
+        json: async () => mockSession,
       } as Response);
 
       const result = await client.getSession();
@@ -177,7 +177,7 @@ describe('AuraClient', () => {
     it('should call signout endpoint', async () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({})
+        json: async () => ({}),
       } as Response);
 
       await client.signOut();
@@ -185,7 +185,7 @@ describe('AuraClient', () => {
       expect(fetch).toHaveBeenCalledWith(
         'http://localhost:3000/api/auth/signout',
         expect.objectContaining({
-          method: 'POST'
+          method: 'POST',
         })
       );
     });
@@ -195,12 +195,12 @@ describe('AuraClient', () => {
     it('should abort request after timeout', async () => {
       const slowClient = new AuraClient({
         baseUrl: 'http://localhost:3000',
-        timeout: 100
+        timeout: 100,
       });
 
       // Mock a slow response
-      vi.mocked(fetch).mockImplementationOnce(() =>
-        new Promise((resolve) => setTimeout(() => resolve({ ok: true } as Response), 200))
+      vi.mocked(fetch).mockImplementationOnce(
+        () => new Promise((resolve) => setTimeout(() => resolve({ ok: true } as Response), 200))
       );
 
       await expect(slowClient.getMessage('0x123')).rejects.toThrow();

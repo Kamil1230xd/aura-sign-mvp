@@ -115,6 +115,7 @@ If a secret was accidentally committed, follow these steps:
 Once a secret is in git history, even if removed, it should be considered compromised.
 
 1. Generate a new secret:
+
    ```bash
    openssl rand -base64 32
    ```
@@ -195,11 +196,12 @@ After rewriting history:
 
 1. **Notify all team members** that history was rewritten
 2. Team members must:
+
    ```bash
    # Backup local changes
    git fetch origin
    git reset --hard origin/main
-   
+
    # Or rebase local branches
    git fetch origin
    git rebase origin/main
@@ -257,12 +259,14 @@ gitleaks detect --source . -v --log-opts="--all"
    - Double-check before committing: `git diff --staged`
 
 2. **Use strong random secrets**
+
    ```bash
    # Generate secure secrets
    openssl rand -base64 32
    ```
 
 3. **Enable pre-commit hooks**
+
    ```bash
    pre-commit install
    ```
@@ -273,10 +277,11 @@ gitleaks detect --source . -v --log-opts="--all"
    - Per compliance schedule for production
 
 5. **Review your commits**
+
    ```bash
    # Check what you're about to commit
    git diff --staged
-   
+
    # Use interactive staging
    git add -p
    ```
@@ -292,6 +297,7 @@ gitleaks detect --source . -v --log-opts="--all"
    - Include setup in onboarding
 
 3. **Regular audits**
+
    ```bash
    # Monthly full history scan
    ./scripts/detect_secrets_in_history.sh

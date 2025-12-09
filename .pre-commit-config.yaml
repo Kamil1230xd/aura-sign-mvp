@@ -22,7 +22,7 @@ repos:
         exclude: \.md$
       - id: end-of-file-fixer
       - id: check-yaml
-        args: ['--unsafe']  # Allow custom YAML tags
+        args: ['--unsafe'] # Allow custom YAML tags
       - id: check-added-large-files
         args: ['--maxkb=1000']
       - id: check-merge-conflict

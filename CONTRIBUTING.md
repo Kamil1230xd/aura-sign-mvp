@@ -13,17 +13,20 @@ Thank you for your interest in contributing to Aura-Sign MVP! This document prov
 ### Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/Kamil1230xd/aura-sign-mvp.git
    cd aura-sign-mvp
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. Run tests and type checks:
+
    ```bash
    pnpm type-check
    pnpm test:unit
@@ -31,14 +34,15 @@ Thank you for your interest in contributing to Aura-Sign MVP! This document prov
    ```
 
 4. **Set up pre-commit hooks (REQUIRED for security):**
+
    ```bash
    # Option 1: Using pre-commit framework (recommended)
    pip install pre-commit
    pre-commit install
-   
+
    # Option 2: Using Husky (automatic after pnpm install)
    # Hooks are auto-installed via prepare script
-   
+
    # Verify setup
    pnpm run check-secrets
    ```
@@ -85,6 +89,7 @@ pre-commit run --all-files
 ### Allowed Files
 
 Only placeholder values are allowed in:
+
 - `.env.example` - Use `CHANGE_ME_*` placeholders
 - `docker-compose.yml` - Use `${ENV_VAR:?Required}` syntax
 - Documentation - Use obvious fake values
@@ -149,6 +154,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) specificatio
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -161,6 +167,7 @@ Types:
 - `security`: Security improvements
 
 Examples:
+
 ```
 feat(auth): add SIWE authentication support
 fix(client): handle network errors gracefully

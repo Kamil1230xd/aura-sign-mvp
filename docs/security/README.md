@@ -53,19 +53,19 @@ import { SiweMessage } from 'siwe';
 
 async function verifySignature(message: string, signature: string) {
   const siweMessage = new SiweMessage(message);
-  
+
   // Verify nonce exists and hasn't been used
   const nonce = await getNonceFromDB(siweMessage.nonce);
   if (!nonce || nonce.used) {
     throw new Error('Invalid or used nonce');
   }
-  
+
   // Verify signature
   await siweMessage.verify({ signature });
-  
+
   // Mark nonce as used
   await markNonceAsUsed(siweMessage.nonce);
-  
+
   return siweMessage.address;
 }
 ```
@@ -118,9 +118,9 @@ const sessionOptions = {
   cookieName: 'aura_session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    httpOnly: true,                                 // Prevent XSS
-    sameSite: 'lax' as const,                      // CSRF protection
-    maxAge: 60 * 60 * 24 * 7,                      // 7 days
+    httpOnly: true, // Prevent XSS
+    sameSite: 'lax' as const, // CSRF protection
+    maxAge: 60 * 60 * 24 * 7, // 7 days
   },
 };
 ```
@@ -212,12 +212,12 @@ Implement regular secret rotation:
 
 ### Sensitive Data Classification
 
-| Category | Examples | Protection Required |
-|----------|----------|---------------------|
-| **Critical** | Private keys (never stored) | N/A - Never handle |
-| **Sensitive** | Wallet addresses, signatures | Encryption at rest, access logs |
-| **Confidential** | User metadata, embeddings | Encryption at rest |
-| **Public** | Public profiles | Standard security |
+| Category         | Examples                     | Protection Required             |
+| ---------------- | ---------------------------- | ------------------------------- |
+| **Critical**     | Private keys (never stored)  | N/A - Never handle              |
+| **Sensitive**    | Wallet addresses, signatures | Encryption at rest, access logs |
+| **Confidential** | User metadata, embeddings    | Encryption at rest              |
+| **Public**       | Public profiles              | Standard security               |
 
 ### Encryption at Rest
 
@@ -230,7 +230,7 @@ Enable encryption for sensitive data:
 model User {
   id       String @id @default(uuid())
   address  String // Public wallet address - no encryption needed
-  
+
   // Sensitive data - encrypt if storing
   @@index([address])
 }
@@ -286,7 +286,7 @@ Implement data retention policies:
 async function cleanupOldData() {
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() - 90);
-  
+
   await prisma.embedding.deleteMany({
     where: {
       created_at: {
@@ -369,9 +369,7 @@ await prisma.user.findUnique({
 });
 
 // ❌ INCORRECT: Raw SQL without parameters
-await prisma.$queryRawUnsafe(
-  `SELECT * FROM users WHERE address = '${userAddress}'`
-);
+await prisma.$queryRawUnsafe(`SELECT * FROM users WHERE address = '${userAddress}'`);
 
 // ✅ CORRECT: Raw SQL with parameters
 await prisma.$queryRaw`
@@ -411,10 +409,10 @@ Enable Dependabot in GitHub:
 # .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
+      interval: 'weekly'
     open-pull-requests-limit: 10
 ```
 
@@ -518,6 +516,7 @@ Conduct regular penetration testing:
 3. **Pre-Launch**: Comprehensive security audit
 
 **Test Areas**:
+
 - Authentication bypass attempts
 - Session hijacking
 - SQL injection
@@ -542,6 +541,7 @@ Conduct regular penetration testing:
 ### Incident Response Team
 
 Define roles:
+
 - **Incident Commander**: Coordinates response
 - **Technical Lead**: Implements fixes
 - **Communications Lead**: Handles notifications
@@ -567,9 +567,11 @@ If user data is compromised:
 **Status**: Open / Investigating / Resolved
 
 ### Summary
+
 Brief description of the incident.
 
 ### Timeline
+
 - HH:MM - Incident detected
 - HH:MM - Team notified
 - HH:MM - Containment implemented
@@ -577,17 +579,21 @@ Brief description of the incident.
 - HH:MM - Incident closed
 
 ### Impact
+
 - Systems affected
 - Data compromised
 - Users impacted
 
 ### Root Cause
+
 What caused the incident.
 
 ### Remediation
+
 What was done to fix it.
 
 ### Prevention
+
 Steps to prevent recurrence.
 ```
 

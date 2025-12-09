@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - ESLint configuration for monorepo with TypeScript support
 - Prettier configuration for consistent code formatting
 - Dependabot configuration for automated dependency updates
@@ -16,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CHANGELOG.md for tracking changes
 
 ### Fixed
+
 - TypeScript compilation errors in next-auth package
 - iron-session v8 API compatibility (added IronSession types)
 - Support for both Pages API and App Router in next-auth
@@ -23,11 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ESLint configuration for demo-site (non-interactive setup)
 
 ### Changed
+
 - Override noEmit in all package tsconfigs to enable builds
 - Updated pnpm-lock.yaml with new dependencies
 - Enhanced CI workflow with better caching and security checks
 
 ### Security
+
 - Added required secret scanning with gitleaks
 - Added dependency review for pull requests
 - Configured security scanning to fail on detection
@@ -35,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - Initial Release
 
 ### Added
+
 - Monorepo structure with pnpm workspaces
 - TypeScript client SDK (@aura-sign/client)
 - React components and hooks (@aura-sign/react)
@@ -64,10 +69,12 @@ When making changes, add an entry under the `[Unreleased]` section in the approp
 
 ```markdown
 ### Added
+
 - New feature with brief description (#PR-number)
 - Another feature (#PR-number)
 
 ### Fixed
+
 - Bug fix description (#PR-number)
 ```
 
@@ -82,9 +89,11 @@ When creating a new release:
 5. Push changes and tag
 
 Example:
+
 ```markdown
 ## [0.2.0] - 2024-01-15
 
 ### Added
+
 - Feature from unreleased section
 ```

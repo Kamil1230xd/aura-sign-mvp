@@ -6,7 +6,7 @@ export interface AuraUser extends AuraSession {
   avatar?: string;
 }
 
-export type AuthState = 
+export type AuthState =
   | 'disconnected'
   | 'connecting'
   | 'connected'
