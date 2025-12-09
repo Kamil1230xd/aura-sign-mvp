@@ -26,11 +26,11 @@ fi
 read -r -p "Create .env.local with secure random secrets? [Y/n]: " create
 create=${create:-Y}
 if [[ "$create" =~ ^(Y|y|)$ ]]; then
-  # Generate secure random passwords
-  POSTGRES_PASSWORD=$(openssl rand -base64 32 | tr -d '\n')
-  MINIO_ROOT_PASSWORD=$(openssl rand -base64 32 | tr -d '\n')
-  SESSION_SECRET=$(openssl rand -base64 32 | tr -d '\n')
-  IRON_SESSION_PASSWORD=$(openssl rand -base64 32 | tr -d '\n')
+  # Generate secure random passwords (using URL-safe base64 to avoid shell special characters)
+  POSTGRES_PASSWORD=$(openssl rand -base64 32 | tr -d '\n' | tr '+/' '-_')
+  MINIO_ROOT_PASSWORD=$(openssl rand -base64 32 | tr -d '\n' | tr '+/' '-_')
+  SESSION_SECRET=$(openssl rand -base64 32 | tr -d '\n' | tr '+/' '-_')
+  IRON_SESSION_PASSWORD=$(openssl rand -base64 32 | tr -d '\n' | tr '+/' '-_')
   
   cat > "$ENV_FILE" <<EOF
 # Local development environment - DO NOT COMMIT

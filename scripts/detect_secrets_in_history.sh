@@ -140,7 +140,7 @@ elif [ $GITLEAKS_RESULT -eq 1 ]; then
   if command -v jq >/dev/null 2>&1 && [ -f "$REPORT_PATH" ]; then
     echo ""
     echo "Summary of findings:"
-    jq -r '.[] | "  - \(.RuleID): \(.File) (commit: \(.Commit)[0:7])"' "$REPORT_PATH" | head -10
+    jq -r '.[] | "  - \(.RuleID): \(.File) (commit: \(.Commit[:7]))"' "$REPORT_PATH" | head -10
     
     TOTAL_FINDINGS=$(jq '. | length' "$REPORT_PATH")
     if [ "$TOTAL_FINDINGS" -gt 10 ]; then

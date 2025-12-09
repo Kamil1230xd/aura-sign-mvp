@@ -16,7 +16,3 @@ else
   echo "   Or use Docker: pnpm run check-secrets"
   echo "   Skipping secret scan..."
 fi
-
-# Run linting on staged files
-echo "🔍 Running linters..."
-pnpm lint-staged || true

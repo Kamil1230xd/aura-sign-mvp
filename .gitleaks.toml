@@ -39,8 +39,7 @@ stopwords = [
 [[rules]]
 id = "env-file-committed"
 description = "Prevent committing .env or .env.local files"
-regex = '''\.env(\.local|\.development|\.production|\.test)?$'''
-path = '''\.env'''
+path = '''\.env(\.local|\.development|\.production|\.test)?$'''
 tags = ["security", "credentials"]
 
 [[rules]]

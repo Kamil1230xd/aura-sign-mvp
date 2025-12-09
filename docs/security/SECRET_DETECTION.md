@@ -139,8 +139,8 @@ Once a secret is in git history, even if removed, it should be considered compro
 # Create a file with the secret pattern
 echo "old_secret_value" > secrets.txt
 
-# Remove secret from history
-bfg --replace-text secrets.txt
+# Remove secret from history (requires path to repo or .git directory)
+bfg --replace-text secrets.txt .git
 
 # Clean up
 git reflog expire --expire=now --all

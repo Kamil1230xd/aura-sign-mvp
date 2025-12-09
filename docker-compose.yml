@@ -5,7 +5,8 @@ services:
     image: pgvector/pgvector:pg16
     environment:
       # ⚠️ LOCAL DEVELOPMENT ONLY - DO NOT use these credentials in production
-      # These values must be set as environment variables (e.g., in .env.local)
+      # Docker Compose loads .env file automatically from this directory
+      # You can also override with environment variables or use .env.local (must be sourced manually)
       # Example: POSTGRES_PASSWORD=your_secure_password
       POSTGRES_USER: ${POSTGRES_USER:-aura_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set as environment variable}
@@ -27,7 +28,8 @@ services:
     command: server /data --console-address ":9001"
     environment:
       # ⚠️ LOCAL DEVELOPMENT ONLY - DO NOT use these credentials in production
-      # These values must be set as environment variables (e.g., in .env.local)
+      # Docker Compose loads .env file automatically from this directory
+      # You can also override with environment variables or use .env.local (must be sourced manually)
       # Example: MINIO_ROOT_PASSWORD=your_secure_password
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set as environment variable}
