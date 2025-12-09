@@ -4,18 +4,21 @@ services:
   postgres:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_USER: aura_user
-      POSTGRES_PASSWORD: aura_pass
-      POSTGRES_DB: aura
+      # ⚠️ LOCAL DEVELOPMENT ONLY - DO NOT use these credentials in production
+      # These values must be set as environment variables (e.g., in .env.local)
+      # Example: POSTGRES_PASSWORD=your_secure_password
+      POSTGRES_USER: ${POSTGRES_USER:-aura_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set as environment variable}
+      POSTGRES_DB: ${POSTGRES_DB:-aura}
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis-data:/data
 
@@ -23,11 +26,14 @@ services:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: minio123
+      # ⚠️ LOCAL DEVELOPMENT ONLY - DO NOT use these credentials in production
+      # These values must be set as environment variables (e.g., in .env.local)
+      # Example: MINIO_ROOT_PASSWORD=your_secure_password
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set as environment variable}
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     volumes:
       - minio-data:/data
 

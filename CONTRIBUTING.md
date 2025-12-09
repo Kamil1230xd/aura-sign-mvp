@@ -13,22 +13,94 @@ Thank you for your interest in contributing to Aura-Sign MVP! This document prov
 ### Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/Kamil1230xd/aura-sign-mvp.git
    cd aura-sign-mvp
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. Run tests and type checks:
+
    ```bash
    pnpm type-check
    pnpm test:unit
    pnpm lint
    ```
+
+4. **Set up pre-commit hooks (REQUIRED for security):**
+
+   ```bash
+   # Option 1: Using pre-commit framework (recommended)
+   pip install pre-commit
+   pre-commit install
+
+   # Option 2: Using Husky (automatic after pnpm install)
+   # Hooks are auto-installed via prepare script
+
+   # Verify setup
+   pnpm run check-secrets
+   ```
+
+## Security Guidelines
+
+### Never Commit Secrets
+
+**⚠️ CRITICAL:** Secrets must never be committed to the repository.
+
+- Use `.env.local` for local development (gitignored)
+- Use `.env.example` for documentation with placeholders only
+- Generate secrets with: `openssl rand -base64 32`
+- Pre-commit hooks will scan for secrets automatically
+
+### Pre-commit Secret Scanning
+
+Pre-commit hooks are **REQUIRED** to prevent secret leaks:
+
+```bash
+# Install pre-commit hooks (choose one method)
+pre-commit install  # Using pre-commit framework
+# OR
+pnpm install        # Husky hooks auto-install
+
+# Test the hooks
+pre-commit run --all-files
+```
+
+### Secret Detection Tools
+
+- **Gitleaks** scans for secrets in commits (runs in CI and pre-commit)
+- Manual scan: `pnpm run check-secrets`
+- History scan: `./scripts/detect_secrets_in_history.sh`
+- Full guide: [docs/security/SECRET_DETECTION.md](docs/security/SECRET_DETECTION.md)
+
+### If You Accidentally Commit a Secret
+
+1. **STOP** - Do not push if possible
+2. **Rotate the secret immediately** - Consider it compromised
+3. **Remove from history** - Follow [docs/security/SECRET_DETECTION.md](docs/security/SECRET_DETECTION.md)
+4. **Notify maintainers** - Open an incident report
+
+### Allowed Files
+
+Only placeholder values are allowed in:
+
+- `.env.example` - Use `CHANGE_ME_*` placeholders
+- `docker-compose.yml` - Use `${ENV_VAR:?Required}` syntax
+- Documentation - Use obvious fake values
+
+### Security Best Practices
+
+- **Review diffs before committing:** `git diff --staged`
+- **Use interactive staging:** `git add -p` to review line-by-line
+- **Check CI results:** Secret scanning runs on all PRs
+- **Rotate regularly:** Change development secrets monthly
+- **Never reuse secrets:** Production ≠ Development ≠ Testing
 
 ## Code Quality Standards
 
@@ -82,6 +154,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) specificatio
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -94,6 +167,7 @@ Types:
 - `security`: Security improvements
 
 Examples:
+
 ```
 feat(auth): add SIWE authentication support
 fix(client): handle network errors gracefully

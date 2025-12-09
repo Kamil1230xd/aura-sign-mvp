@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Check for secrets using gitleaks (if available)
+if command -v gitleaks >/dev/null 2>&1; then
+  echo "🔍 Scanning for secrets with gitleaks..."
+  gitleaks protect --verbose --redact --staged
+  if [ $? -ne 0 ]; then
+    echo "❌ Secret detected! Commit blocked."
+    echo "   If this is a false positive, add it to .gitleaks.toml allowlist"
+    exit 1
+  fi
+  echo "✅ No secrets detected"
+else
+  echo "⚠️  gitleaks not installed. Install from: https://github.com/gitleaks/gitleaks"
+  echo "   Or use Docker: pnpm run check-secrets"
+  echo "   Skipping secret scan..."
+fi
+
+# Run linting on staged files
+echo "🔍 Running linters..."
+pnpm lint-staged || true

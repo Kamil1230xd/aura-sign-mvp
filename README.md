@@ -15,10 +15,10 @@ Aura-Sign MVP provides wallet-based authentication (SIWE) and modular building b
 
 ## Key features
 
-- 🔐 **SIWE Authentication** — secure wallet-based sign-in flows  
-- 🏗️ **Monorepo (pnpm)** — apps + packages architecture  
-- ⚡ **TypeScript-first** — strict typing across packages  
-- 🎯 **Modular design** — client SDK, auth, React UI components  
+- 🔐 **SIWE Authentication** — secure wallet-based sign-in flows
+- 🏗️ **Monorepo (pnpm)** — apps + packages architecture
+- ⚡ **TypeScript-first** — strict typing across packages
+- 🎯 **Modular design** — client SDK, auth, React UI components
 - 🚀 **Next.js demo** — working example application
 
 ---
@@ -61,8 +61,8 @@ The bootstrap script handles dependencies, environment setup, database initializ
 pnpm install
 
 # 2) Create .env from template
-cp .env.example .env
-# edit .env to add values (see .env.example for required keys)
+cp .env.example .env.local
+# edit .env.local to add secure values (NEVER commit this file!)
 
 # 3) Start development (monorepo)
 pnpm dev
@@ -70,6 +70,24 @@ pnpm dev
 # 4) Or run only demo
 pnpm demo
 ```
+
+### Pre-commit Secret Detection (Recommended)
+
+Protect against accidentally committing secrets:
+
+```bash
+# Option 1: Using pre-commit framework
+pip install pre-commit
+pre-commit install
+
+# Option 2: Using Husky (automatic after pnpm install)
+# Hooks are auto-installed via prepare script
+
+# Manual secret check
+pnpm run check-secrets
+```
+
+See [docs/security/SECRET_DETECTION.md](docs/security/SECRET_DETECTION.md) for comprehensive secret detection and remediation guide.
 
 ---
 
@@ -231,7 +249,9 @@ See `CONTRIBUTING.md` for detailed guidelines.
 MIT
 
 ## 🛡️ License &amp; IP Protection
+
 This project is protected by **Aura Protection Suite v1.0**.
+
 - **SDKs:** MIT (Open Source)
 - **Core Engine:** Business Source License 1.1 (Source Available)
 - **AI Models:** PolyForm Shield (Data Protected)

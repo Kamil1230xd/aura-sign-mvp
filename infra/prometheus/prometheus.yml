@@ -2,8 +2,8 @@
 # This configuration scrapes metrics from the API and Trustmath worker services
 
 global:
-  scrape_interval: 15s      # How frequently to scrape targets
-  evaluation_interval: 15s  # How frequently to evaluate rules
+  scrape_interval: 15s # How frequently to scrape targets
+  evaluation_interval: 15s # How frequently to evaluate rules
   external_labels:
     cluster: 'aura-sign-mvp'
     environment: 'production'
@@ -33,7 +33,7 @@ scrape_configs:
     metrics_path: '/metrics'
     static_configs:
       - targets:
-          - 'aura-api:3000'    # Adjust host and port as needed
+          - 'aura-api:3000' # Adjust host and port as needed
         labels:
           service: 'api'
           component: 'backend'
@@ -49,7 +49,7 @@ scrape_configs:
     metrics_path: '/metrics'
     static_configs:
       - targets:
-          - 'trustmath-worker:3001'    # Adjust host and port as needed
+          - 'trustmath-worker:3001' # Adjust host and port as needed
         labels:
           service: 'worker'
           component: 'trustmath'
