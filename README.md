@@ -149,10 +149,14 @@ pnpm test:e2e
 If your project depends on Postgres / MinIO / Redis, use the provided `docker-compose.yml`:
 
 ```bash
+# Environment variables must be set first (use bootstrap script or source .env.local)
+source .env.local  # If you created .env.local manually
 docker-compose up -d
 # then run migrations if applicable:
 pnpm migrate
 ```
+
+**Note:** The `scripts/bootstrap_local_dev.sh` script handles this automatically.
 
 (See `docs/README_DEV.md` for full infra and migration steps.)
 

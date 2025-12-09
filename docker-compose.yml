@@ -5,8 +5,10 @@ services:
     image: pgvector/pgvector:pg16
     environment:
       # ⚠️ LOCAL DEVELOPMENT ONLY - DO NOT use these credentials in production
-      # Docker Compose loads .env file automatically from this directory
-      # You can also override with environment variables or use .env.local (must be sourced manually)
+      # Environment variables can be set via:
+      #   1. .env file (auto-loaded by docker-compose, but gitignored)
+      #   2. .env.local file (must be sourced: source .env.local && docker-compose up)
+      #   3. scripts/bootstrap_local_dev.sh (recommended - handles sourcing automatically)
       # Example: POSTGRES_PASSWORD=your_secure_password
       POSTGRES_USER: ${POSTGRES_USER:-aura_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set as environment variable}
@@ -28,8 +30,10 @@ services:
     command: server /data --console-address ":9001"
     environment:
       # ⚠️ LOCAL DEVELOPMENT ONLY - DO NOT use these credentials in production
-      # Docker Compose loads .env file automatically from this directory
-      # You can also override with environment variables or use .env.local (must be sourced manually)
+      # Environment variables can be set via:
+      #   1. .env file (auto-loaded by docker-compose, but gitignored)
+      #   2. .env.local file (must be sourced: source .env.local && docker-compose up)
+      #   3. scripts/bootstrap_local_dev.sh (recommended - handles sourcing automatically)
       # Example: MINIO_ROOT_PASSWORD=your_secure_password
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minio}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set as environment variable}

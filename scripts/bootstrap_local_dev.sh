@@ -66,6 +66,14 @@ fi
 
 echo "Bringing up docker services..."
 if [ -f docker-compose.yml ]; then
+  # Source .env.local to make environment variables available to docker-compose
+  if [ -f "$ENV_FILE" ]; then
+    echo "Loading environment variables from $ENV_FILE..."
+    set -a
+    # shellcheck source=/dev/null
+    source "$ENV_FILE"
+    set +a
+  fi
   docker compose up -d
   echo "Waiting for Postgres..."
   POSTGRES_CONTAINER=""
