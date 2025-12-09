@@ -140,13 +140,44 @@ pnpm migrate
 
 ---
 
-## CI / Security
+## CI/CD & Quality Gates
 
-CI runs via **GitHub Actions** — build, test, (optionally) migrate & e2e.
+### Continuous Integration
 
-**Security:** enable Dependabot + scheduled `security-audit.yml`.
+CI runs via **GitHub Actions** on every push and pull request:
 
-Add secret scanning in CI (gitleaks/trufflehog). See `docs/security/` for automation details.
+- ✅ **Type checking** - All TypeScript must compile without errors
+- ✅ **Linting** - Code must pass ESLint rules
+- ✅ **Unit tests** - All unit tests must pass
+- ✅ **Build** - All packages must build successfully
+- 🔒 **Secret scanning** - Gitleaks scans for committed secrets (BLOCKS merge)
+- 🔒 **Dependency review** - Checks for vulnerable dependencies in PRs
+
+### Required Checks
+
+Pull requests **cannot be merged** until:
+
+1. All CI checks pass (build, lint, test, type-check)
+2. Secret scanning passes (no secrets detected)
+3. Code review approved by maintainer
+4. No merge conflicts with main branch
+
+### Automated Dependency Updates
+
+**Dependabot** is configured to automatically:
+
+- Check for dependency updates weekly (Mondays 9:00 CET)
+- Group related updates (TypeScript, testing, linting)
+- Create PRs for minor/patch updates
+- Major version updates require manual review
+
+### Security Scanning
+
+- **Secret scanning:** Gitleaks checks every commit
+- **Dependency audit:** pnpm audit runs on each CI build
+- **Vulnerability alerts:** GitHub security advisories enabled
+
+See `.github/dependabot.yml` and `.github/workflows/ci.yml` for configuration details.
 
 ---
 
@@ -170,14 +201,24 @@ Add secret scanning in CI (gitleaks/trufflehog). See `docs/security/` for automa
 
 ## Contributing
 
-1. Fork → feature branch → push → PR
-2. All PRs must pass: linting, unit tests, CI e2e (where applicable).
-3. Include CHANGELOG entry for breaking changes.
+We welcome contributions! Please read our contribution guidelines:
+
+1. **Read CONTRIBUTING.md** - Understand our workflow and standards
+2. **Fork & Branch** - Create feature branch from `main`
+3. **Code Quality** - Ensure all checks pass (`pnpm lint`, `pnpm type-check`, `pnpm test:unit`)
+4. **Conventional Commits** - Use semantic commit messages
+5. **Pull Request** - Open PR with clear description
+6. **Code Review** - Address review feedback
+7. **Update CHANGELOG.md** - Add entry for your changes
+
+See `CONTRIBUTING.md` for detailed guidelines.
 
 ---
 
 ## Further docs
 
+- **Contributing:** `CONTRIBUTING.md` - Guidelines for contributors
+- **Changelog:** `CHANGELOG.md` - Project changes and releases
 - **Developer guide:** `docs/README_DEV.md`
 - **Testing guide:** `docs/TESTING.md`
 - **Security & audits:** `docs/security/README.md`
