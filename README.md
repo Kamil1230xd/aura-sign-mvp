@@ -61,8 +61,8 @@ The bootstrap script handles dependencies, environment setup, database initializ
 pnpm install
 
 # 2) Create .env from template
-cp .env.example .env
-# edit .env to add values (see .env.example for required keys)
+cp .env.example .env.local
+# edit .env.local to add secure values (NEVER commit this file!)
 
 # 3) Start development (monorepo)
 pnpm dev
@@ -70,6 +70,24 @@ pnpm dev
 # 4) Or run only demo
 pnpm demo
 ```
+
+### Pre-commit Secret Detection (Recommended)
+
+Protect against accidentally committing secrets:
+
+```bash
+# Option 1: Using pre-commit framework
+pip install pre-commit
+pre-commit install
+
+# Option 2: Using Husky (automatic after pnpm install)
+# Hooks are auto-installed via prepare script
+
+# Manual secret check
+pnpm run check-secrets
+```
+
+See [docs/security/SECRET_DETECTION.md](docs/security/SECRET_DETECTION.md) for comprehensive secret detection and remediation guide.
 
 ---
 

@@ -1,0 +1,37 @@
+# Pre-commit hooks for Aura-Sign MVP
+# Install: pip install pre-commit && pre-commit install
+# Run manually: pre-commit run --all-files
+# See https://pre-commit.com for more information
+
+repos:
+  # Secret detection with Gitleaks
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.1
+    hooks:
+      - id: gitleaks
+        name: Detect secrets with Gitleaks
+        entry: gitleaks protect --verbose --redact --staged
+        language: golang
+        pass_filenames: false
+
+  # General pre-commit hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.md$
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: ['--unsafe']  # Allow custom YAML tags
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-merge-conflict
+      - id: detect-private-key
+        exclude: ^docs/|^test/fixtures/
+
+  # Prevent committing to main directly
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: no-commit-to-branch
+        args: ['--branch', 'main', '--branch', 'master']

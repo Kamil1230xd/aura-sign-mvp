@@ -1,0 +1,51 @@
+# Gitleaks configuration for Aura-Sign MVP
+# This configuration helps prevent committing secrets to the repository
+
+title = "Aura-Sign Secret Detection"
+
+[extend]
+# Use default gitleaks rules
+useDefault = true
+
+[allowlist]
+description = "Allowlist for non-sensitive example files and test fixtures"
+
+# Allow .env.example files (they should only contain placeholders)
+paths = [
+  '''\.env\.example$''',
+  '''\.env\.sample$''',
+  '''\.env\.template$''',
+]
+
+# Allow test fixtures and documentation with example credentials
+regexes = [
+  # Placeholder patterns in example files
+  '''CHANGE_ME_''',
+  '''REPLACE_ME_''',
+  '''your-secret-key-here''',
+  '''your_secure_password''',
+  '''long_random_password_here''',
+  '''replace_me_with_secure_random''',
+]
+
+# Stopwords for common false positives in documentation
+stopwords = [
+  '''example''',
+  '''sample''',
+  '''placeholder''',
+  '''template''',
+]
+
+[[rules]]
+id = "env-file-committed"
+description = "Prevent committing .env or .env.local files"
+regex = '''\.env(\.local|\.development|\.production|\.test)?$'''
+path = '''\.env'''
+tags = ["security", "credentials"]
+
+[[rules]]
+id = "private-key-file"
+description = "Prevent committing private key files"
+regex = '''(id_rsa|id_dsa|id_ecdsa|id_ed25519|\.pem|\.key)$'''
+path = '''(id_rsa|id_dsa|id_ecdsa|id_ed25519|\.pem|\.key)$'''
+tags = ["security", "private-key"]
