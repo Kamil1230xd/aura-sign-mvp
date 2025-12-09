@@ -20,7 +20,7 @@
     "test:unit": "pnpm -r --filter './packages/*' test"
   },
   "devDependencies": {
-    "@types/node": "^20.10.0",
+    "@types/node": "^20.19.26",
     "@vitest/ui": "^4.0.15",
     "prettier": "^3.7.4",
     "turbo": "^1.11.0",
