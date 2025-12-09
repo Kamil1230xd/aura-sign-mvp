@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
+        specifier: ^20.19.26
+        version: 20.19.26
       '@vitest/ui':
         specifier: ^4.0.15
         version: 4.0.15(vitest@4.0.15)
@@ -25,7 +25,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.15
-        version: 4.0.15(@types/node@20.19.25)(@vitest/ui@4.0.15)(happy-dom@20.0.11)
+        version: 4.0.15(@types/node@20.19.26)(@vitest/ui@4.0.15)(happy-dom@20.0.11)
 
   apps/demo-site:
     dependencies:
@@ -49,8 +49,8 @@ importers:
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
+        specifier: ^20.19.26
+        version: 20.19.26
       '@types/react':
         specifier: ^18.2.0
         version: 18.3.27
@@ -82,8 +82,8 @@ importers:
         specifier: ^1.40.0
         version: 1.57.0
       '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
+        specifier: ^20.19.26
+        version: 20.19.26
 
   packages/client-ts:
     dependencies:
@@ -92,14 +92,14 @@ importers:
         version: 6.16.0
     devDependencies:
       '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
+        specifier: ^20.19.26
+        version: 20.19.26
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
       vitest:
         specifier: ^4.0.15
-        version: 4.0.15(@types/node@20.19.25)(@vitest/ui@4.0.15)(happy-dom@20.0.11)
+        version: 4.0.15(@types/node@20.19.26)(@vitest/ui@4.0.15)(happy-dom@20.0.11)
 
   packages/database-client:
     dependencies:
@@ -108,14 +108,14 @@ importers:
         version: 5.22.0(prisma@5.22.0)
     devDependencies:
       '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
+        specifier: ^20.19.26
+        version: 20.19.26
       prisma:
         specifier: ^5.7.0
         version: 5.22.0
       ts-node:
         specifier: ^10.9.1
-        version: 10.9.2(@types/node@20.19.25)(typescript@5.9.3)
+        version: 10.9.2(@types/node@20.19.26)(typescript@5.9.3)
       tsx:
         specifier: ^4.7.0
         version: 4.21.0
@@ -136,8 +136,8 @@ importers:
         version: 2.3.2(ethers@6.16.0)
     devDependencies:
       '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
+        specifier: ^20.19.26
+        version: 20.19.26
       next:
         specifier: ^14.0.0
         version: 14.2.33(react-dom@18.3.1)(react@18.3.1)
@@ -161,8 +161,8 @@ importers:
         specifier: ^8.0.1
         version: 8.0.1(@types/react@18.3.27)(react-dom@18.3.1)(react@18.3.1)
       '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
+        specifier: ^20.19.26
+        version: 20.19.26
       '@types/react':
         specifier: ^18.2.0
         version: 18.3.27
@@ -177,7 +177,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^4.0.15
-        version: 4.0.15(@types/node@20.19.25)(@vitest/ui@4.0.15)(happy-dom@20.0.11)
+        version: 4.0.15(@types/node@20.19.26)(@vitest/ui@4.0.15)(happy-dom@20.0.11)
 
   packages/trustmath:
     dependencies:
@@ -186,8 +186,8 @@ importers:
         version: 15.1.3
     devDependencies:
       '@types/node':
-        specifier: ^20.10.0
-        version: 20.19.25
+        specifier: ^20.19.26
+        version: 20.19.26
       typescript:
         specifier: ^5.3.0
         version: 5.9.3
@@ -1353,8 +1353,8 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
-  /@types/node@20.19.25:
-    resolution: {integrity: sha512-ZsJzA5thDQMSQO788d7IocwwQbI8B5OPzmqNvpf3NY/+MHDAS759Wo0gd2WQeXYt5AAAQjzcrTVC6SKCuYgoCQ==}
+  /@types/node@20.19.26:
+    resolution: {integrity: sha512-0l6cjgF0XnihUpndDhk+nyD3exio3iKaYROSgvh/qSevPXax3L8p5DBRFjbvalnwatGgHEQn2R88y2fA3g4irg==}
     dependencies:
       undici-types: 6.21.0
     dev: true
@@ -1712,7 +1712,7 @@ packages:
       '@vitest/spy': 4.0.15
       estree-walker: 3.0.3
       magic-string: 0.30.21
-      vite: 7.2.6(@types/node@20.19.25)
+      vite: 7.2.6(@types/node@20.19.26)
     dev: true
 
   /@vitest/pretty-format@4.0.15:
@@ -1752,7 +1752,7 @@ packages:
       sirv: 3.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vitest: 4.0.15(@types/node@20.19.25)(@vitest/ui@4.0.15)(happy-dom@20.0.11)
+      vitest: 4.0.15(@types/node@20.19.26)(@vitest/ui@4.0.15)(happy-dom@20.0.11)
     dev: true
 
   /@vitest/utils@4.0.15:
@@ -3085,7 +3085,7 @@ packages:
     resolution: {integrity: sha512-QsCdAUHAmiDeKeaNojb1OHOPF7NjcWPBR7obdu3NwH2a/oyQaLg5d0aaCy/9My6CdPChYF07dvz5chaXBGaD4g==}
     engines: {node: '>=20.0.0'}
     dependencies:
-      '@types/node': 20.19.25
+      '@types/node': 20.19.26
       '@types/whatwg-mimetype': 3.0.2
       whatwg-mimetype: 3.0.0
     dev: true
@@ -4589,7 +4589,7 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
 
-  /ts-node@10.9.2(@types/node@20.19.25)(typescript@5.9.3):
+  /ts-node@10.9.2(@types/node@20.19.26)(typescript@5.9.3):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
     peerDependencies:
@@ -4608,7 +4608,7 @@ packages:
       '@tsconfig/node12': 1.0.11
       '@tsconfig/node14': 1.0.3
       '@tsconfig/node16': 1.0.4
-      '@types/node': 20.19.25
+      '@types/node': 20.19.26
       acorn: 8.15.0
       acorn-walk: 8.3.4
       arg: 4.1.3
@@ -4847,7 +4847,7 @@ packages:
     resolution: {integrity: sha512-QQDsV8OnSf5Uc30CKSwG9lnhMPe6exHtTXLRYX8uMwKENy640pU+2BgBL0LRbDh/eYRahNCS7aewCx0wf3NYVA==}
     dev: false
 
-  /vite@7.2.6(@types/node@20.19.25):
+  /vite@7.2.6(@types/node@20.19.26):
     resolution: {integrity: sha512-tI2l/nFHC5rLh7+5+o7QjKjSR04ivXDF4jcgV0f/bTQ+OJiITy5S6gaynVsEM+7RqzufMnVbIon6Sr5x1SDYaQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
@@ -4887,7 +4887,7 @@ packages:
       yaml:
         optional: true
     dependencies:
-      '@types/node': 20.19.25
+      '@types/node': 20.19.26
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
@@ -4898,7 +4898,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest@4.0.15(@types/node@20.19.25)(@vitest/ui@4.0.15)(happy-dom@20.0.11):
+  /vitest@4.0.15(@types/node@20.19.26)(@vitest/ui@4.0.15)(happy-dom@20.0.11):
     resolution: {integrity: sha512-n1RxDp8UJm6N0IbJLQo+yzLZ2sQCDyl1o0LeugbPWf8+8Fttp29GghsQBjYJVmWq3gBFfe9Hs1spR44vovn2wA==}
     engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
     hasBin: true
@@ -4932,7 +4932,7 @@ packages:
       jsdom:
         optional: true
     dependencies:
-      '@types/node': 20.19.25
+      '@types/node': 20.19.26
       '@vitest/expect': 4.0.15
       '@vitest/mocker': 4.0.15(vite@7.2.6)
       '@vitest/pretty-format': 4.0.15
@@ -4953,7 +4953,7 @@ packages:
       tinyexec: 1.0.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.2.6(@types/node@20.19.25)
+      vite: 7.2.6(@types/node@20.19.26)
       why-is-node-running: 2.3.0
     transitivePeerDependencies:
       - jiti
