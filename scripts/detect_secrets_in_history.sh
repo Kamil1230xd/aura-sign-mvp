@@ -16,9 +16,9 @@ echo "=============================="
 echo ""
 
 # Default values
-BRANCH="${1:-}"
+BRANCH="${1:-}"  # Empty means scan all branches
 REPORT_PATH="gitleaks-history-report.json"
-LOG_OPTS="--all"
+LOG_OPTS="--all"  # Scan all branches by default
 
 # Parse arguments
 while [[ $# -gt 0 ]]; do

@@ -61,11 +61,7 @@ REDIS_URL=redis://localhost:6379
 EMBEDDING_API=http://localhost:4001
 EOF
   echo "✅ Created $ENV_FILE with secure random secrets"
-  
-  # Ensure .env.local will not be accidentally committed
-  git update-index --assume-unchanged "$ENV_FILE" 2>/dev/null || true
-  echo "⚠️  SECURITY: $ENV_FILE is now marked as assume-unchanged in git"
-  echo "   NEVER commit this file - it contains secrets!"
+  echo "⚠️  SECURITY: $ENV_FILE contains secrets - it is gitignored and must NEVER be committed!"
 fi
 
 echo "Bringing up docker services..."

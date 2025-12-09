@@ -46,6 +46,5 @@ tags = ["security", "credentials"]
 [[rules]]
 id = "private-key-file"
 description = "Prevent committing private key files"
-regex = '''(id_rsa|id_dsa|id_ecdsa|id_ed25519|\.pem|\.key)$'''
 path = '''(id_rsa|id_dsa|id_ecdsa|id_ed25519|\.pem|\.key)$'''
 tags = ["security", "private-key"]
