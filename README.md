@@ -50,9 +50,12 @@ Aura-Sign MVP provides wallet-based authentication (SIWE) and modular building b
 git clone https://github.com/Kamil1230xd/aura-sign-mvp.git
 cd aura-sign-mvp
 ./scripts/bootstrap_local_dev.sh
+
+# Optional but recommended: Set up pre-commit secret detection
+./scripts/setup_pre_commit_hooks.sh
 ```
 
-The bootstrap script handles dependencies, environment setup, database initialization, and more.
+The bootstrap script handles dependencies, environment setup, database initialization, and auto-generates secure credentials. See [Quick Start Security Guide](docs/QUICK_START_SECURITY.md) for more information.
 
 ### Option 2: Manual Setup
 
@@ -60,9 +63,10 @@ The bootstrap script handles dependencies, environment setup, database initializ
 # 1) Install dependencies
 pnpm install
 
-# 2) Create .env from template
-cp .env.example .env
-# edit .env to add values (see .env.example for required keys)
+# 2) Create .env.local from template (never commit this file!)
+cp .env.example .env.local
+# edit .env.local and replace ALL placeholder values
+# Generate secrets with: openssl rand -base64 32
 
 # 3) Start development (monorepo)
 pnpm dev
@@ -172,11 +176,25 @@ Pull requests **cannot be merged** until:
 
 ### Security Scanning
 
-- **Secret scanning:** Gitleaks checks every commit
+- **Secret scanning:** Gitleaks checks every commit (blocks merge if secrets found)
+- **Pre-commit hooks:** Optional local secret detection (see setup below)
 - **Dependency audit:** pnpm audit runs on each CI build
 - **Vulnerability alerts:** GitHub security advisories enabled
 
-See `.github/dependabot.yml` and `.github/workflows/ci.yml` for configuration details.
+**Setup pre-commit secret detection (recommended):**
+```bash
+# Install gitleaks
+brew install gitleaks  # macOS (see docs for other platforms)
+
+# Setup hook
+./scripts/setup_pre_commit_hooks.sh
+```
+
+📚 **Security documentation:**
+- [Quick Start Security Guide](docs/QUICK_START_SECURITY.md) - Essential security practices
+- [Comprehensive Security Guide](docs/SECURITY_SECRETS.md) - Secret detection and remediation
+
+See `.github/dependabot.yml` and `.github/workflows/ci.yml` for CI configuration.
 
 ---
 
