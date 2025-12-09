@@ -24,9 +24,9 @@ if ! command -v gitleaks >/dev/null 2>&1; then
     echo "  - Linux: Download from https://github.com/gitleaks/gitleaks/releases"
     echo "  - Or use Docker: docker pull zricethezav/gitleaks:latest"
     echo ""
-    read -r -p "Continue without gitleaks? (the hook will fail until you install it) [y/N]: " continue
-    continue=${continue:-N}
-    if [[ ! "$continue" =~ ^(Y|y)$ ]]; then
+    read -r -p "Continue without gitleaks? (the hook will fail until you install it) [y/N]: " user_continue
+    user_continue=${user_continue:-N}
+    if [[ ! "$user_continue" =~ ^(Y|y)$ ]]; then
         echo "Aborting."
         exit 1
     fi
@@ -108,12 +108,16 @@ echo ""
 # Test if gitleaks is available
 if command -v gitleaks >/dev/null 2>&1; then
     echo "Running gitleaks test scan..."
-    if gitleaks detect --config="$REPO_ROOT/.gitleaks.toml" --verbose 2>&1 | head -20; then
-        echo ""
-        echo "✅ Gitleaks is working correctly"
+    # Capture output and exit code separately
+    GITLEAKS_OUTPUT=$(gitleaks detect --config="$REPO_ROOT/.gitleaks.toml" --verbose 2>&1)
+    GITLEAKS_EXIT=$?
+    echo "$GITLEAKS_OUTPUT" | head -20
+    echo ""
+    if [ $GITLEAKS_EXIT -eq 0 ]; then
+        echo "✅ Gitleaks is working correctly - no secrets detected"
     else
-        echo ""
-        echo "⚠️  Gitleaks test completed (check output above for any findings)"
+        echo "⚠️  Gitleaks test completed (exit code: $GITLEAKS_EXIT)"
+        echo "    This may indicate secrets were found or a configuration issue"
     fi
 else
     echo "⚠️  Gitleaks not installed - hook will warn but not block commits"

@@ -69,12 +69,15 @@ if [ -f docker-compose.yml ]; then
   if [ -z "$POSTGRES_CONTAINER" ]; then
     echo "Warning: Postgres container not found, skipping readiness check"
   else
-    # Source .env.local to get the DB user, or use default
+    # Extract POSTGRES_USER from .env.local safely, or use default
+    PG_USER="postgres"
     if [ -f "$ENV_FILE" ]; then
-      # shellcheck disable=SC1090
-      source "$ENV_FILE"
+      # Safely extract POSTGRES_USER using grep and cut, avoiding source
+      PG_USER_FROM_FILE=$(grep "^POSTGRES_USER=" "$ENV_FILE" | cut -d'=' -f2- | tr -d '"' | head -1)
+      if [ -n "$PG_USER_FROM_FILE" ]; then
+        PG_USER="$PG_USER_FROM_FILE"
+      fi
     fi
-    PG_USER="${POSTGRES_USER:-postgres}"
     until docker exec "$POSTGRES_CONTAINER" pg_isready -U "$PG_USER" >/dev/null 2>&1; do
       sleep 1
     done
