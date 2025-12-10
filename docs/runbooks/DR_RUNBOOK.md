@@ -22,6 +22,7 @@ This runbook provides procedures for disaster recovery, backup, and restore oper
 ### Purpose
 
 This runbook ensures business continuity by providing clear procedures for:
+
 - Regular backup operations
 - Data restoration
 - System recovery from various disaster scenarios
@@ -30,6 +31,7 @@ This runbook ensures business continuity by providing clear procedures for:
 ### Scope
 
 This runbook covers:
+
 - **Database**: PostgreSQL with pgvector
 - **Application**: Next.js apps and packages
 - **Storage**: MinIO/S3 object storage
@@ -38,13 +40,13 @@ This runbook covers:
 
 ### Recovery Team Roles
 
-| Role | Responsibilities | Contact |
-|------|-----------------|---------|
-| **Incident Commander** | Coordinates overall recovery effort | [Primary Contact] |
-| **Database Admin** | Database backup/restore operations | [DBA Contact] |
-| **DevOps Lead** | Infrastructure and deployment | [DevOps Contact] |
-| **Security Lead** | Security assessment and compliance | [Security Contact] |
-| **Communications** | Stakeholder notifications | [Comms Contact] |
+| Role                   | Responsibilities                    | Contact            |
+| ---------------------- | ----------------------------------- | ------------------ |
+| **Incident Commander** | Coordinates overall recovery effort | [Primary Contact]  |
+| **Database Admin**     | Database backup/restore operations  | [DBA Contact]      |
+| **DevOps Lead**        | Infrastructure and deployment       | [DevOps Contact]   |
+| **Security Lead**      | Security assessment and compliance  | [Security Contact] |
+| **Communications**     | Stakeholder notifications           | [Comms Contact]    |
 
 ---
 
@@ -54,24 +56,24 @@ This runbook covers:
 
 Target time to restore service after an incident:
 
-| Component | RTO | Priority |
-|-----------|-----|----------|
-| **Authentication Service** | 1 hour | Critical |
-| **API Services** | 2 hours | High |
-| **Database** | 2 hours | High |
-| **Web Interface** | 4 hours | Medium |
-| **Analytics/Reporting** | 24 hours | Low |
+| Component                  | RTO      | Priority |
+| -------------------------- | -------- | -------- |
+| **Authentication Service** | 1 hour   | Critical |
+| **API Services**           | 2 hours  | High     |
+| **Database**               | 2 hours  | High     |
+| **Web Interface**          | 4 hours  | Medium   |
+| **Analytics/Reporting**    | 24 hours | Low      |
 
 ### Recovery Point Objective (RPO)
 
 Maximum acceptable data loss:
 
-| Component | RPO | Backup Frequency |
-|-----------|-----|------------------|
-| **Database** | 1 hour | Hourly |
-| **User Sessions** | 15 minutes | Continuous (Redis persistence) |
-| **Application Logs** | 5 minutes | Continuous streaming |
-| **Object Storage** | 24 hours | Daily |
+| Component            | RPO        | Backup Frequency               |
+| -------------------- | ---------- | ------------------------------ |
+| **Database**         | 1 hour     | Hourly                         |
+| **User Sessions**    | 15 minutes | Continuous (Redis persistence) |
+| **Application Logs** | 5 minutes  | Continuous streaming           |
+| **Object Storage**   | 24 hours   | Daily                          |
 
 ---
 
@@ -113,6 +115,7 @@ export GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account.json
 ```
 
 **Backup Output**:
+
 - Local: `/tmp/db_backups/aura_sign_YYYYMMDD_HHMMSS.sql.gz`
 - S3: `s3://aura-backups/database/backups/aura_sign_YYYYMMDD_HHMMSS.sql.gz`
 - GCS: `gs://aura-backups/database/backups/aura_sign_YYYYMMDD_HHMMSS.sql.gz`
@@ -140,41 +143,41 @@ kind: CronJob
 metadata:
   name: database-backup
 spec:
-  schedule: "0 * * * *"  # Hourly
+  schedule: '0 * * * *' # Hourly
   jobTemplate:
     spec:
       template:
         spec:
           containers:
-          - name: backup
-            image: postgres:16
-            command:
-            - /bin/bash
-            - -c
-            - |
-              pg_dump -h $PGHOST -U $PGUSER -d $PGDATABASE | gzip > /backups/backup_$(date +%Y%m%d_%H%M%S).sql.gz
-            env:
-            - name: PGHOST
-              value: "postgres-service"
-            - name: PGUSER
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: username
-            - name: PGPASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgres-credentials
-                  key: password
-            - name: PGDATABASE
-              value: "aura_sign"
-            volumeMounts:
-            - name: backup-storage
-              mountPath: /backups
+            - name: backup
+              image: postgres:16
+              command:
+                - /bin/bash
+                - -c
+                - |
+                  pg_dump -h $PGHOST -U $PGUSER -d $PGDATABASE | gzip > /backups/backup_$(date +%Y%m%d_%H%M%S).sql.gz
+              env:
+                - name: PGHOST
+                  value: 'postgres-service'
+                - name: PGUSER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-credentials
+                      key: username
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-credentials
+                      key: password
+                - name: PGDATABASE
+                  value: 'aura_sign'
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backups
           volumes:
-          - name: backup-storage
-            persistentVolumeClaim:
-              claimName: backup-pvc
+            - name: backup-storage
+              persistentVolumeClaim:
+                claimName: backup-pvc
           restartPolicy: OnFailure
 ```
 
@@ -426,6 +429,7 @@ redis-cli DBSIZE
 ### Scenario 1: Database Corruption
 
 **Symptoms**:
+
 - Database queries failing
 - Data inconsistency errors
 - PostgreSQL crashes
@@ -455,6 +459,7 @@ EOF
 ### Scenario 2: Complete Data Center Outage
 
 **Symptoms**:
+
 - All services unreachable
 - No database connectivity
 - Network isolation
@@ -494,6 +499,7 @@ curl https://aura-sign.com/health
 ### Scenario 3: Ransomware Attack
 
 **Symptoms**:
+
 - Files encrypted
 - Database inaccessible
 - Ransom note present
@@ -530,6 +536,7 @@ aws s3 cp s3://aura-backups/database/backups/backup_before_attack.sql.gz /tmp/
 **Estimated Recovery Time**: 24-48 hours
 
 **DO NOT**:
+
 - Pay the ransom
 - Attempt to decrypt files without professional help
 - Reconnect compromised systems to network
@@ -537,6 +544,7 @@ aws s3 cp s3://aura-backups/database/backups/backup_before_attack.sql.gz /tmp/
 ### Scenario 4: Accidental Data Deletion
 
 **Symptoms**:
+
 - Tables or records missing
 - User reports data loss
 - Recent DELETE or DROP commands in audit log
@@ -574,6 +582,7 @@ psql -h $PGHOST -U $PGUSER -d aura_sign -c "SELECT COUNT(*) FROM identity;"
 ### Scenario 5: Secrets Compromise
 
 **Symptoms**:
+
 - Unauthorized access detected
 - Secrets leaked in logs or public repository
 - Security alert from monitoring
@@ -726,12 +735,12 @@ Thank you for your patience.
 
 ### Backup Testing Schedule
 
-| Test Type | Frequency | Owner |
-|-----------|-----------|-------|
-| Backup Verification | Daily | Automated |
-| Restore Test (Dev) | Weekly | DBA |
-| DR Drill (Staging) | Monthly | DevOps Team |
-| Full DR Exercise | Quarterly | All Teams |
+| Test Type           | Frequency | Owner       |
+| ------------------- | --------- | ----------- |
+| Backup Verification | Daily     | Automated   |
+| Restore Test (Dev)  | Weekly    | DBA         |
+| DR Drill (Staging)  | Monthly   | DevOps Team |
+| Full DR Exercise    | Quarterly | All Teams   |
 
 ### Backup Validation
 
@@ -789,20 +798,20 @@ fi
 
 ### Internal Team
 
-| Role | Name | Phone | Email | Backup |
-|------|------|-------|-------|--------|
+| Role               | Name   | Phone   | Email   | Backup        |
+| ------------------ | ------ | ------- | ------- | ------------- |
 | Incident Commander | [Name] | [Phone] | [Email] | [Backup Name] |
-| Database Admin | [Name] | [Phone] | [Email] | [Backup Name] |
-| DevOps Lead | [Name] | [Phone] | [Email] | [Backup Name] |
-| Security Lead | [Name] | [Phone] | [Email] | [Backup Name] |
+| Database Admin     | [Name] | [Phone] | [Email] | [Backup Name] |
+| DevOps Lead        | [Name] | [Phone] | [Email] | [Backup Name] |
+| Security Lead      | [Name] | [Phone] | [Email] | [Backup Name] |
 
 ### External Vendors
 
-| Vendor | Service | Support Phone | Support Email |
-|--------|---------|---------------|---------------|
-| AWS | Cloud Infrastructure | [Support Number] | [Support Email] |
-| PostgreSQL | Database Support | [Support Number] | [Support Email] |
-| Security Firm | Incident Response | [Support Number] | [Support Email] |
+| Vendor        | Service              | Support Phone    | Support Email   |
+| ------------- | -------------------- | ---------------- | --------------- |
+| AWS           | Cloud Infrastructure | [Support Number] | [Support Email] |
+| PostgreSQL    | Database Support     | [Support Number] | [Support Email] |
+| Security Firm | Incident Response    | [Support Number] | [Support Email] |
 
 ### Escalation Path
 
@@ -831,9 +840,9 @@ fi
 
 ### Change Log
 
-| Date | Version | Changes | Author |
-|------|---------|---------|--------|
-| 2025-12-06 | 1.0 | Initial version | Copilot |
+| Date       | Version | Changes         | Author  |
+| ---------- | ------- | --------------- | ------- |
+| 2025-12-06 | 1.0     | Initial version | Copilot |
 
 ---
 

@@ -25,6 +25,7 @@ The repository uses multiple layers of secret detection to prevent credentials f
 3. **Configuration** - `.gitleaks.toml` defines what patterns to detect and allowlist
 
 **Security Philosophy:**
+
 - Prevention is better than remediation
 - Defense in depth: multiple detection layers
 - Developer-friendly: clear errors and remediation steps
@@ -44,6 +45,7 @@ Install pre-commit hooks to detect secrets before they're committed:
 ```
 
 This script:
+
 - Creates a pre-commit hook in `.git/hooks/`
 - Checks if gitleaks is installed
 - Runs automatically before each `git commit`
@@ -54,11 +56,13 @@ This script:
 The pre-commit hook requires [gitleaks](https://github.com/gitleaks/gitleaks) to be installed:
 
 **macOS (Homebrew):**
+
 ```bash
 brew install gitleaks
 ```
 
 **Linux (Binary Install):**
+
 ```bash
 # Check for latest version at: https://github.com/gitleaks/gitleaks/releases
 # Example with v8.18.1 (replace with latest):
@@ -68,11 +72,13 @@ sudo mv gitleaks /usr/local/bin/
 ```
 
 **Windows (Scoop):**
+
 ```bash
 scoop install gitleaks
 ```
 
 **Docker (No Installation):**
+
 ```bash
 # Add alias to ~/.bashrc or ~/.zshrc
 alias gitleaks='docker run --rm -v "$(pwd):/repo" zricethezav/gitleaks:latest'
@@ -118,6 +124,7 @@ Every push and pull request triggers secret scanning in GitHub Actions:
 ```
 
 **Behavior:**
+
 - ✅ Scans full git history (not just changed files)
 - ❌ Blocks PR merge if secrets found
 - 📊 Reports findings in workflow logs
@@ -144,6 +151,7 @@ If CI detects secrets:
 ### ✅ DO
 
 **Use environment variables:**
+
 ```bash
 # .env.local (gitignored)
 DATABASE_URL=postgresql://user:actual_password@localhost:5432/db
@@ -151,12 +159,14 @@ SESSION_SECRET=real_secret_here
 ```
 
 **Reference in code:**
+
 ```typescript
 const dbUrl = process.env.DATABASE_URL;
 const secret = process.env.SESSION_SECRET;
 ```
 
 **Use placeholder values in examples:**
+
 ```bash
 # .env.example (committed)
 DATABASE_URL=postgresql://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:5432/db
@@ -164,6 +174,7 @@ SESSION_SECRET=YOUR_SESSION_SECRET_HERE_MIN_32_CHARS
 ```
 
 **Generate strong secrets:**
+
 ```bash
 # Generate 32-character base64 secret
 openssl rand -base64 32
@@ -173,6 +184,7 @@ for i in {1..3}; do openssl rand -base64 32; done
 ```
 
 **Use secret management tools in production:**
+
 - AWS Secrets Manager / Systems Manager Parameter Store
 - Azure Key Vault
 - Google Cloud Secret Manager
@@ -182,13 +194,15 @@ for i in {1..3}; do openssl rand -base64 32; done
 ### ❌ DON'T
 
 **Don't commit secrets directly:**
+
 ```typescript
 // ❌ BAD
-const apiKey = "sk_live_51HqJ8K2eZ...";
-const password = "MyP@ssw0rd123";
+const apiKey = 'sk_live_51HqJ8K2eZ...';
+const password = 'MyP@ssw0rd123';
 ```
 
 **Don't commit .env files:**
+
 ```bash
 # ❌ BAD - These should be in .gitignore
 .env
@@ -197,6 +211,7 @@ const password = "MyP@ssw0rd123";
 ```
 
 **Don't use weak secrets:**
+
 ```bash
 # ❌ BAD - Too simple/guessable
 PASSWORD=password123
@@ -205,6 +220,7 @@ API_KEY=test
 ```
 
 **Don't store secrets in:**
+
 - Source code files
 - Configuration files committed to git
 - Documentation or README files
@@ -226,6 +242,7 @@ Removing secrets from history **rewrites git history** and requires force-pushin
 [BFG](https://rtyley.github.io/bfg-repo-cleaner/) is faster and easier than `git filter-branch`.
 
 **Install BFG:**
+
 ```bash
 # macOS
 brew install bfg
@@ -235,6 +252,7 @@ wget https://repo1.maven.org/maven2/com/madgag/bfg/1.14.0/bfg-1.14.0.jar
 ```
 
 **Remove secrets from history:**
+
 ```bash
 # 1. Clone a fresh copy
 git clone --mirror https://github.com/Kamil1230xd/aura-sign-mvp.git
@@ -269,6 +287,7 @@ git reset --hard origin/main
 [git-filter-repo](https://github.com/newren/git-filter-repo) is a modern alternative to `git filter-branch`.
 
 **Install:**
+
 ```bash
 # macOS
 brew install git-filter-repo
@@ -278,6 +297,7 @@ pip3 install git-filter-repo
 ```
 
 **Remove secrets:**
+
 ```bash
 # 1. Backup your repo
 git clone https://github.com/Kamil1230xd/aura-sign-mvp.git aura-sign-mvp-backup
@@ -333,6 +353,7 @@ Once secrets are removed from git history:
    - Old clones will have diverged history
 
 3. **Verify removal**
+
    ```bash
    # Scan cleaned history
    gitleaks detect --config=.gitleaks.toml --verbose
@@ -411,6 +432,7 @@ stopwords = [
 ```
 
 4. Test the configuration:
+
 ```bash
 gitleaks detect --config=.gitleaks.toml --verbose
 ```
@@ -424,6 +446,7 @@ gitleaks detect --config=.gitleaks.toml --verbose
 **Solution:** Install gitleaks (see [Installing Gitleaks](#installing-gitleaks))
 
 Or bypass temporarily (not recommended):
+
 ```bash
 git commit --no-verify
 ```
@@ -443,6 +466,7 @@ If gitleaks detects something that's not a real secret:
 ### Pre-commit Hook Not Running
 
 Check if hook is executable:
+
 ```bash
 ls -la .git/hooks/pre-commit
 # Should show: -rwxr-xr-x
@@ -452,6 +476,7 @@ chmod +x .git/hooks/pre-commit
 ```
 
 Re-run setup script:
+
 ```bash
 ./scripts/setup_pre_commit_hooks.sh
 ```
@@ -461,6 +486,7 @@ Re-run setup script:
 CI scans the **entire git history**, while the pre-commit hook only scans **staged files**.
 
 Check full history locally:
+
 ```bash
 gitleaks detect --config=.gitleaks.toml --verbose
 ```

@@ -47,6 +47,7 @@ git push origin staging/ops-test
 ```
 
 **Verification Checkpoint**:
+
 - ✅ All new files present: packages/database-client/, packages/trustmath/, infra/, scripts/, docs/
 - ✅ No merge conflicts
 - ✅ Branch pushed successfully
@@ -100,6 +101,7 @@ STAGING_DEPLOY_KEY=<ssh-key-for-staging-hosts>
 ```
 
 **Verification Checkpoint**:
+
 - ✅ Vault paths created and readable
 - ✅ GitHub environment secrets configured
 - ✅ CI can authenticate to Vault
@@ -169,13 +171,13 @@ CREATE TABLE IF NOT EXISTS trust_event (
 
 -- Create HNSW index on identity
 DROP INDEX IF EXISTS identity_ai_embedding_idx;
-CREATE INDEX identity_ai_embedding_idx 
+CREATE INDEX identity_ai_embedding_idx
 ON identity USING hnsw (ai_embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 64);
 
 -- Create HNSW index on trust_event
 DROP INDEX IF EXISTS trust_event_ai_embedding_idx;
-CREATE INDEX trust_event_ai_embedding_idx 
+CREATE INDEX trust_event_ai_embedding_idx
 ON trust_event USING hnsw (ai_embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 64);
 
@@ -210,6 +212,7 @@ npx prisma migrate deploy
 ```
 
 **Verification Checkpoint**:
+
 - ✅ pgvector extension installed
 - ✅ HNSW indexes created on identity and trust_event tables
 - ✅ Prisma migrations applied successfully
@@ -311,6 +314,7 @@ chmod +x scripts/deploy_staging_worker.sh
 ```
 
 **Verification Checkpoint**:
+
 - ✅ API running and responding on port 3000
 - ✅ Worker running and responding on port 3001
 - ✅ Both services expose /metrics endpoint
@@ -411,6 +415,7 @@ curl 'http://localhost:9090/api/v1/query?query=up' | jq '.data.result'
 ```
 
 **Verification Checkpoint**:
+
 - ✅ Prometheus running on port 9090
 - ✅ All targets (api, worker) showing as "up"
 - ✅ Metrics being scraped successfully
@@ -429,18 +434,33 @@ const { upsertIdentityEmbedding } = require('@aura-sign/database-client/dist/vec
 
 async function insertTestData() {
   console.log('Inserting test embeddings...');
-  
+
   const testIdentities = [
-    { address: '0x1111111111111111111111111111111111111111', embedding: Array(1536).fill(0).map(() => Math.random()) },
-    { address: '0x2222222222222222222222222222222222222222', embedding: Array(1536).fill(0).map(() => Math.random()) },
-    { address: '0x3333333333333333333333333333333333333333', embedding: Array(1536).fill(0).map(() => Math.random()) },
+    {
+      address: '0x1111111111111111111111111111111111111111',
+      embedding: Array(1536)
+        .fill(0)
+        .map(() => Math.random()),
+    },
+    {
+      address: '0x2222222222222222222222222222222222222222',
+      embedding: Array(1536)
+        .fill(0)
+        .map(() => Math.random()),
+    },
+    {
+      address: '0x3333333333333333333333333333333333333333',
+      embedding: Array(1536)
+        .fill(0)
+        .map(() => Math.random()),
+    },
   ];
-  
+
   for (const identity of testIdentities) {
     await upsertIdentityEmbedding(identity.address, identity.embedding);
     console.log(`✓ Inserted ${identity.address}`);
   }
-  
+
   console.log('Test data inserted successfully');
 }
 
@@ -463,16 +483,18 @@ const { findSimilarIdentities } = require('@aura-sign/database-client/dist/vecto
 
 async function testSimilaritySearch() {
   console.log('Testing similarity search...');
-  
-  const queryEmbedding = Array(1536).fill(0).map(() => Math.random());
-  
+
+  const queryEmbedding = Array(1536)
+    .fill(0)
+    .map(() => Math.random());
+
   const results = await findSimilarIdentities(queryEmbedding, 5);
-  
+
   console.log('Similarity search results:');
   results.forEach((result, i) => {
     console.log(`  ${i + 1}. ${result.address} - distance: ${result.distance.toFixed(4)}`);
   });
-  
+
   if (results.length > 0) {
     console.log('✓ Similarity search working correctly');
   } else {
@@ -490,6 +512,7 @@ node scripts/test_vector_search_staging.js
 ```
 
 **Verification Checkpoint**:
+
 - ✅ Test embeddings inserted successfully
 - ✅ Similarity search returns results
 - ✅ Results ordered by distance (ascending)
@@ -568,6 +591,7 @@ chmod +x scripts/lighthouse_staging.sh
 ```
 
 **Verification Checkpoint**:
+
 - ✅ All Playwright tests passing
 - ✅ Lighthouse performance score > 0.8
 - ✅ No critical errors in test output
@@ -628,6 +652,7 @@ psql -h staging-db.aura -U aura_staging_user -c "DROP DATABASE aura_staging_rest
 ```
 
 **Verification Checkpoint**:
+
 - ✅ Backup completes without errors
 - ✅ Backup file created and uploaded to S3
 - ✅ Restore successful on test database
@@ -676,6 +701,7 @@ tail -f /var/log/postgresql/postgresql-staging.log | grep -E "ERROR|FATAL"
 ```
 
 **Verification Checkpoint**:
+
 - ✅ All custom metrics being collected
 - ✅ Alert rules configured and ready to fire
 - ✅ No errors in application logs
@@ -701,36 +727,38 @@ config:
   phases:
     - duration: 60
       arrivalRate: 5
-      name: "Warm up"
+      name: 'Warm up'
     - duration: 120
       arrivalRate: 10
-      name: "Sustained load"
+      name: 'Sustained load'
     - duration: 60
       arrivalRate: 20
-      name: "Peak load"
-  processor: "./load_test_processor.js"
+      name: 'Peak load'
+  processor: './load_test_processor.js'
 
 scenarios:
-  - name: "Vector similarity search"
+  - name: 'Vector similarity search'
     flow:
       - post:
-          url: "/api/similarity"
+          url: '/api/similarity'
           json:
-            embedding: "{{ embedding }}"
+            embedding: '{{ embedding }}'
             k: 5
           capture:
-            - json: "$.results"
-              as: "results"
+            - json: '$.results'
+              as: 'results'
 ```
 
 Create processor `tests/load/load_test_processor.js`:
 
 ```javascript
 module.exports = {
-  generateEmbedding: function(context, events, done) {
-    context.vars.embedding = Array(1536).fill(0).map(() => Math.random());
+  generateEmbedding: function (context, events, done) {
+    context.vars.embedding = Array(1536)
+      .fill(0)
+      .map(() => Math.random());
     return done();
-  }
+  },
 };
 ```
 
@@ -756,6 +784,7 @@ watch -n 5 'curl -s https://staging-api.aura/metrics | grep vector_search_latenc
 ```
 
 **Verification Checkpoint**:
+
 - ✅ System handles sustained load without errors
 - ✅ P95 latency < 2 seconds under load
 - ✅ No memory leaks observed
@@ -826,6 +855,7 @@ cat scripts/rollback_staging.sh
 ```
 
 **Verification Checkpoint**:
+
 - ✅ Current state documented
 - ✅ Rollback script created and reviewed
 - ✅ Rollback steps tested on separate environment

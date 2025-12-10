@@ -15,10 +15,10 @@ Aura-Sign MVP provides wallet-based authentication (SIWE) and modular building b
 
 ## Key features
 
-- 🔐 **SIWE Authentication** — secure wallet-based sign-in flows  
-- 🏗️ **Monorepo (pnpm)** — apps + packages architecture  
-- ⚡ **TypeScript-first** — strict typing across packages  
-- 🎯 **Modular design** — client SDK, auth, React UI components  
+- 🔐 **SIWE Authentication** — secure wallet-based sign-in flows
+- 🏗️ **Monorepo (pnpm)** — apps + packages architecture
+- ⚡ **TypeScript-first** — strict typing across packages
+- 🎯 **Modular design** — client SDK, auth, React UI components
 - 🚀 **Next.js demo** — working example application
 
 ---
@@ -97,7 +97,8 @@ See `.env.example` for all available configuration options. Key variables includ
 - `POSTGRES_USER`, `POSTGRES_PASSWORD` - Database credentials for Docker Compose
 - `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD` - Object storage credentials
 
-> **Security note:** 
+> **Security note:**
+>
 > - Never commit `.env` or `.env.local` files (they are gitignored)
 > - Use placeholders in `.env.example` only
 > - Generate strong random secrets for production use
@@ -182,6 +183,7 @@ Pull requests **cannot be merged** until:
 - **Vulnerability alerts:** GitHub security advisories enabled
 
 **Setup pre-commit secret detection (recommended):**
+
 ```bash
 # Install gitleaks
 brew install gitleaks  # macOS (see docs for other platforms)
@@ -191,6 +193,7 @@ brew install gitleaks  # macOS (see docs for other platforms)
 ```
 
 📚 **Security documentation:**
+
 - [Quick Start Security Guide](docs/QUICK_START_SECURITY.md) - Essential security practices
 - [Comprehensive Security Guide](docs/SECURITY_SECRETS.md) - Secret detection and remediation
 
@@ -248,7 +251,9 @@ See `CONTRIBUTING.md` for detailed guidelines.
 MIT
 
 ## 🛡️ License &amp; IP Protection
+
 This project is protected by **Aura Protection Suite v1.0**.
+
 - **SDKs:** MIT (Open Source)
 - **Core Engine:** Business Source License 1.1 (Source Available)
 - **AI Models:** PolyForm Shield (Data Protected)

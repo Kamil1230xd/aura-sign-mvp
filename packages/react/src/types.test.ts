@@ -11,7 +11,7 @@ describe('React Types', () => {
         'connected',
         'signing',
         'authenticated',
-        'error'
+        'error',
       ];
 
       expect(states).toHaveLength(6);
@@ -25,7 +25,7 @@ describe('React Types', () => {
       const user: AuraUser = {
         address: '0x1234567890123456789012345678901234567890',
         chainId: 1,
-        isAuthenticated: true
+        isAuthenticated: true,
       };
 
       expect(user.address).toBeDefined();
@@ -39,7 +39,7 @@ describe('React Types', () => {
         chainId: 1,
         isAuthenticated: true,
         ensName: 'vitalik.eth',
-        avatar: 'https://example.com/avatar.png'
+        avatar: 'https://example.com/avatar.png',
       };
 
       expect(user.ensName).toBe('vitalik.eth');
@@ -56,7 +56,7 @@ describe('React Types', () => {
         signIn: async () => {},
         signOut: async () => {},
         isLoading: false,
-        isAuthenticated: false
+        isAuthenticated: false,
       };
 
       expect(mockReturn).toHaveProperty('user');
@@ -72,7 +72,7 @@ describe('React Types', () => {
       const user: AuraUser = {
         address: '0x1234567890123456789012345678901234567890',
         chainId: 1,
-        isAuthenticated: true
+        isAuthenticated: true,
       };
 
       const mockReturn: UseAuraUserReturn = {
@@ -82,7 +82,7 @@ describe('React Types', () => {
         signIn: async () => {},
         signOut: async () => {},
         isLoading: false,
-        isAuthenticated: true
+        isAuthenticated: true,
       };
 
       expect(mockReturn.user).toBe(user);
@@ -98,7 +98,7 @@ describe('React Types', () => {
         signIn: async () => {},
         signOut: async () => {},
         isLoading: true,
-        isAuthenticated: false
+        isAuthenticated: false,
       };
 
       expect(mockReturn.state).toBe('connecting');
@@ -113,7 +113,7 @@ describe('React Types', () => {
         signIn: async () => {},
         signOut: async () => {},
         isLoading: false,
-        isAuthenticated: false
+        isAuthenticated: false,
       };
 
       expect(mockReturn.state).toBe('error');

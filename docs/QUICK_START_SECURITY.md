@@ -49,11 +49,13 @@ openssl rand -base64 32  # Copy this for each secret below
 ## ⚡ Quick Commands
 
 ### Generate a Secure Secret
+
 ```bash
 openssl rand -base64 32
 ```
 
 ### Scan Your Code for Secrets
+
 ```bash
 # Before committing (if you have gitleaks installed)
 gitleaks detect --config=.gitleaks.toml --verbose
@@ -63,6 +65,7 @@ gitleaks protect --staged --config=.gitleaks.toml
 ```
 
 ### Start Infrastructure with Environment Variables
+
 ```bash
 # Ensure .env.local exists with all required variables
 docker-compose up -d
@@ -72,7 +75,7 @@ docker-compose up -d
 
 ## ❌ Never Commit These
 
-- `.env` or `.env.local` files *(gitignored)*
+- `.env` or `.env.local` files _(gitignored)_
 - API keys, tokens, passwords
 - Private keys or certificates
 - Real credentials in any format
@@ -146,6 +149,7 @@ You cannot merge PRs with secrets - the CI will fail.
    - HashiCorp Vault
 
 3. **Review before committing**
+
    ```bash
    git diff --staged  # Review what you're about to commit
    ```
@@ -158,17 +162,17 @@ You cannot merge PRs with secrets - the CI will fail.
 
 ## ⚙️ Environment Variable Reference
 
-| Variable | Purpose | Example | Required |
-|----------|---------|---------|----------|
-| `DATABASE_URL` | PostgreSQL connection | `postgresql://user:pass@host:5432/db` | Yes |
-| `POSTGRES_USER` | DB username (docker-compose) | `aura_user` | Yes |
-| `POSTGRES_PASSWORD` | DB password (docker-compose) | `[32-char secret]` | Yes |
-| `SESSION_SECRET` | Server session secret | `[32-char secret]` | Yes |
-| `IRON_SESSION_PASSWORD` | Cookie encryption | `[32-char secret]` | Yes |
-| `MINIO_ROOT_USER` | MinIO username | `minio` | Yes |
-| `MINIO_ROOT_PASSWORD` | MinIO password | `[32-char secret]` | Yes |
-| `REDIS_URL` | Redis connection | `redis://localhost:6379` | No |
-| `EMBEDDING_API` | Embeddings endpoint | `http://localhost:4001` | No |
+| Variable                | Purpose                      | Example                               | Required |
+| ----------------------- | ---------------------------- | ------------------------------------- | -------- |
+| `DATABASE_URL`          | PostgreSQL connection        | `postgresql://user:pass@host:5432/db` | Yes      |
+| `POSTGRES_USER`         | DB username (docker-compose) | `aura_user`                           | Yes      |
+| `POSTGRES_PASSWORD`     | DB password (docker-compose) | `[32-char secret]`                    | Yes      |
+| `SESSION_SECRET`        | Server session secret        | `[32-char secret]`                    | Yes      |
+| `IRON_SESSION_PASSWORD` | Cookie encryption            | `[32-char secret]`                    | Yes      |
+| `MINIO_ROOT_USER`       | MinIO username               | `minio`                               | Yes      |
+| `MINIO_ROOT_PASSWORD`   | MinIO password               | `[32-char secret]`                    | Yes      |
+| `REDIS_URL`             | Redis connection             | `redis://localhost:6379`              | No       |
+| `EMBEDDING_API`         | Embeddings endpoint          | `http://localhost:4001`               | No       |
 
 ---
 

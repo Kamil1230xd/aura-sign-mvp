@@ -10,7 +10,7 @@ async function main() {
 
   // Seed identities
   console.log('Creating sample identities...');
-  
+
   const identity1 = await prisma.identity.upsert({
     where: { address: '0x1234567890123456789012345678901234567890' },
     update: {},

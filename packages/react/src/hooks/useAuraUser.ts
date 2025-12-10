@@ -43,10 +43,10 @@ export function useAuraUser(): UseAuraUserReturn {
       }
 
       const provider = new ethers.BrowserProvider(ethereum);
-      
+
       // Request account access
       await ethereum.request({
-        method: 'eth_requestAccounts'
+        method: 'eth_requestAccounts',
       });
 
       const signer = await provider.getSigner();
@@ -59,7 +59,7 @@ export function useAuraUser(): UseAuraUserReturn {
 
       // Get message to sign
       const message = await client.getMessage(address, chainId);
-      
+
       // Sign message
       const signature = await signer.signMessage(message);
 

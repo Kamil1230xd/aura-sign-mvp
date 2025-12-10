@@ -64,7 +64,8 @@ Set the `DATABASE_URL` environment variable in `.env.local` (gitignored):
 DATABASE_URL=postgresql://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:5432/aura
 ```
 
-**Security Note:** 
+**Security Note:**
+
 - Never commit real credentials to version control
 - Use strong, randomly generated passwords (generate with `openssl rand -base64 32`)
 - The `docker-compose.yml` reads credentials from environment variables

@@ -13,21 +13,24 @@ Thank you for your interest in contributing to Aura-Sign MVP! This document prov
 ### Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/Kamil1230xd/aura-sign-mvp.git
    cd aura-sign-mvp
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. **Set up pre-commit hooks (RECOMMENDED):**
+
    ```bash
    ./scripts/setup_pre_commit_hooks.sh
    ```
-   
+
    This installs a pre-commit hook that scans for secrets before each commit. Requires [gitleaks](https://github.com/gitleaks/gitleaks) to be installed:
    - macOS: `brew install gitleaks`
    - Linux: See [gitleaks installation](https://github.com/gitleaks/gitleaks#installing)
@@ -126,6 +129,7 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/) specificatio
 ```
 
 Types:
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -138,6 +142,7 @@ Types:
 - `security`: Security improvements
 
 Examples:
+
 ```
 feat(auth): add SIWE authentication support
 fix(client): handle network errors gracefully

@@ -1,97 +1,97 @@
 version: 2
 updates:
   # Enable version updates for npm (pnpm uses npm registry)
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Europe/Warsaw"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Europe/Warsaw'
     open-pull-requests-limit: 10
     labels:
-      - "dependencies"
-      - "automated"
+      - 'dependencies'
+      - 'automated'
     commit-message:
-      prefix: "chore"
-      prefix-development: "chore"
-      include: "scope"
+      prefix: 'chore'
+      prefix-development: 'chore'
+      include: 'scope'
     groups:
       # Group minor and patch updates for production dependencies
       production-dependencies:
-        dependency-type: "production"
+        dependency-type: 'production'
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
       # Group development dependencies
       development-dependencies:
-        dependency-type: "development"
+        dependency-type: 'development'
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
       # Group TypeScript related updates
       typescript:
         patterns:
-          - "typescript"
-          - "@types/*"
-          - "ts-*"
+          - 'typescript'
+          - '@types/*'
+          - 'ts-*'
       # Group testing libraries
       testing:
         patterns:
-          - "vitest"
-          - "@vitest/*"
-          - "@testing-library/*"
-          - "playwright"
+          - 'vitest'
+          - '@vitest/*'
+          - '@testing-library/*'
+          - 'playwright'
       # Group Next.js related updates
       nextjs:
         patterns:
-          - "next"
-          - "eslint-config-next"
-          - "react"
-          - "react-dom"
+          - 'next'
+          - 'eslint-config-next'
+          - 'react'
+          - 'react-dom'
       # Group ESLint and Prettier
       linting:
         patterns:
-          - "eslint*"
-          - "prettier"
-          - "@typescript-eslint/*"
+          - 'eslint*'
+          - 'prettier'
+          - '@typescript-eslint/*'
     ignore:
       # Major version updates require manual review and migration
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: '*'
+        update-types: ['version-update:semver-major']
 
   # GitHub Actions updates
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     labels:
-      - "github-actions"
-      - "dependencies"
-      - "automated"
+      - 'github-actions'
+      - 'dependencies'
+      - 'automated'
     commit-message:
-      prefix: "ci"
-      include: "scope"
+      prefix: 'ci'
+      include: 'scope'
     groups:
       github-actions:
         patterns:
-          - "*"
+          - '*'
 
   # Docker updates for docker-compose
-  - package-ecosystem: "docker"
-    directory: "/"
+  - package-ecosystem: 'docker'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     labels:
-      - "docker"
-      - "dependencies"
-      - "automated"
+      - 'docker'
+      - 'dependencies'
+      - 'automated'
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
     groups:
       docker:
         patterns:
-          - "*"
+          - '*'

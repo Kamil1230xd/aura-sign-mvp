@@ -135,6 +135,7 @@ The repository uses **Hybrid Licensing** (see `NOTICE.md`):
 - **PolyForm Shield**: AI models and data (protected)
 
 Always include appropriate license headers:
+
 - MIT packages: `// License: MIT. See .github/LICENSES/LICENSE_SDK.md`
 - BSL 1.1 packages: `// License: BSL 1.1. See .github/LICENSES/LICENSE_CORE.md`
 - Protected packages: `// License: PolyForm Shield. See .github/LICENSES/LICENSE_DATA.md`
@@ -219,6 +220,7 @@ docker-compose up -d
 ### Schema Management
 
 The project uses Prisma for database schema management. The database-client package includes:
+
 - `schema_extra.prisma` - Example schema extensions with pgvector support
 
 To work with Prisma and migrations:

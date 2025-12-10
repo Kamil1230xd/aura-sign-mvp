@@ -24,17 +24,20 @@ This guide provides comprehensive instructions for developers working on the Aur
 Before you begin, ensure you have the following installed:
 
 - **Node.js**: Version 20.x or higher
+
   ```bash
   node --version  # Should be v20.x.x or higher
   ```
 
 - **pnpm**: Version 8.15.0 (project uses exact version)
+
   ```bash
   npm install -g pnpm@8.15.0
   pnpm --version  # Should be 8.15.0
   ```
 
 - **Git**: For version control
+
   ```bash
   git --version
   ```
@@ -60,6 +63,7 @@ cd aura-sign-mvp
 ```
 
 This script will:
+
 - Check for pnpm installation
 - Backup existing `.env.local` if present
 - Auto-generate secure secrets and create `.env.local` with sane defaults
@@ -120,6 +124,7 @@ echo "MINIO_ROOT_PASSWORD=$(openssl rand -base64 32)"
 ```
 
 **Minimum secret requirements:**
+
 - `SESSION_SECRET`: 32+ characters (base64 encoded)
 - `IRON_SESSION_PASSWORD`: 32+ characters (base64 encoded)
 - Database passwords: 32+ characters for production
@@ -192,15 +197,18 @@ The monorepo is organized into packages and apps:
 ### Packages (`/packages`)
 
 #### @aura-sign/client (`packages/client-ts`)
+
 - TypeScript client SDK for Aura-Sign operations
 - Core functionality for signature operations
 - Utilities for working with Ethereum wallets
 
 **Key Files**:
+
 - `src/index.ts` - Main entry point
 - `src/types.ts` - TypeScript type definitions
 
 **Development**:
+
 ```bash
 cd packages/client-ts
 pnpm dev          # Watch mode
@@ -209,15 +217,18 @@ pnpm type-check   # Type checking
 ```
 
 #### @aura-sign/next-auth (`packages/next-auth`)
+
 - SIWE (Sign-In with Ethereum) authentication handler
 - Iron-session integration for secure sessions
 - Session management utilities
 
 **Key Files**:
+
 - `src/index.ts` - Authentication handlers
 - `src/session.ts` - Session configuration
 
 **Development**:
+
 ```bash
 cd packages/next-auth
 pnpm dev
@@ -225,15 +236,18 @@ pnpm build
 ```
 
 #### @aura-sign/react (`packages/react`)
+
 - React components and hooks for Aura-Sign
 - UI components for wallet connection
 - Custom hooks for authentication state
 
 **Key Files**:
+
 - `src/components/` - React components
 - `src/hooks/` - Custom React hooks
 
 **Development**:
+
 ```bash
 cd packages/react
 pnpm dev
@@ -241,15 +255,18 @@ pnpm build
 ```
 
 #### @aura-sign/database-client (`packages/database-client`)
+
 - Database client for vector operations
 - Prisma schema and migrations
 - Vector similarity search utilities
 
 **Key Files**:
+
 - `schema_extra.prisma` - Vector support schema
 - `src/vector.ts` - Vector operations
 
 **Development**:
+
 ```bash
 cd packages/database-client
 pnpm build
@@ -257,14 +274,17 @@ npx prisma generate
 ```
 
 #### @aura-sign/trustmath (`packages/trustmath`)
+
 - Trust score calculations
 - Metrics and monitoring utilities
 - Prometheus metrics exposition
 
 **Key Files**:
+
 - `src/metrics.ts` - Metrics definitions
 
 **Development**:
+
 ```bash
 cd packages/trustmath
 pnpm dev
@@ -274,15 +294,18 @@ pnpm build
 ### Apps (`/apps`)
 
 #### demo-site (`apps/demo-site`)
+
 - Next.js demonstration application
 - Shows SIWE authentication flow
 - Example usage of all packages
 
 **Key Files**:
+
 - `pages/` - Next.js pages
 - `styles/` - Global styles with Tailwind CSS
 
 **Development**:
+
 ```bash
 cd apps/demo-site
 pnpm dev          # Starts on http://localhost:3001
@@ -291,11 +314,13 @@ pnpm start        # Production server
 ```
 
 #### web (`apps/web`)
+
 - Web application with operational tooling
 - E2E testing with Playwright
 - Vector similarity endpoint testing
 
 **Development**:
+
 ```bash
 cd apps/web
 pnpm dev
@@ -315,6 +340,7 @@ pnpm dev
 ```
 
 This starts:
+
 - All package builds in watch mode
 - Demo site on http://localhost:3001
 
@@ -325,6 +351,7 @@ pnpm demo
 ```
 
 This is an alias for:
+
 ```bash
 pnpm --filter demo-site dev
 ```
@@ -367,14 +394,14 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
       POSTGRES_DB: ${POSTGRES_DB:-aura}
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis-data:/data
 
@@ -385,8 +412,8 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set}
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     volumes:
       - minio-data:/data
 
@@ -522,12 +549,14 @@ pnpm add -D -w typescript
 ### Creating a New Package
 
 1. Create directory in `packages/`:
+
 ```bash
 mkdir packages/new-package
 cd packages/new-package
 ```
 
 2. Initialize package.json:
+
 ```json
 {
   "name": "@aura-sign/new-package",
@@ -544,6 +573,7 @@ cd packages/new-package
 ```
 
 3. Add tsconfig.json:
+
 ```json
 {
   "extends": "../../tsconfig.json",
@@ -592,6 +622,7 @@ For cloud backup (S3/GCS), see `docs/ops/quickstart_deploy.md`.
 ### pnpm install fails
 
 **Solution**: Clear pnpm store and reinstall:
+
 ```bash
 pnpm store prune
 pnpm install
@@ -600,6 +631,7 @@ pnpm install
 ### Port already in use
 
 **Solution**: Find and kill the process using the port:
+
 ```bash
 # Find process on port 3001
 lsof -ti:3001
@@ -614,6 +646,7 @@ pnpm --filter demo-site dev -- -p 3002
 ### Build fails with type errors
 
 **Solution**: Ensure all dependencies are installed and type checking passes:
+
 ```bash
 pnpm install
 pnpm type-check
@@ -624,6 +657,7 @@ Check for circular dependencies between packages.
 ### Database connection fails
 
 **Solution**: Verify DATABASE_URL in .env and ensure PostgreSQL is running:
+
 ```bash
 # Check if PostgreSQL is running
 docker ps | grep postgres
@@ -635,6 +669,7 @@ psql $DATABASE_URL -c "SELECT 1"
 ### pgvector extension not found
 
 **Solution**: Install pgvector extension:
+
 ```bash
 # Using Docker with pgvector/pgvector image
 docker-compose up -d postgres
@@ -651,7 +686,8 @@ CREATE EXTENSION vector;
 
 ### Hot reload not working
 
-**Solution**: 
+**Solution**:
+
 1. Check if dev script is running with `--watch` flag
 2. Restart dev server
 3. Clear dist/ directory: `pnpm clean && pnpm dev`
@@ -659,6 +695,7 @@ CREATE EXTENSION vector;
 ### Workspace dependency not found
 
 **Solution**: Rebuild the dependency:
+
 ```bash
 # Build all packages
 pnpm build
