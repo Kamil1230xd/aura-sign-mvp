@@ -1,0 +1,186 @@
+# Gitleaks Configuration for Aura-Sign MVP
+# Detects secrets and credentials in commits and git history
+# https://github.com/gitleaks/gitleaks
+
+title = "Gitleaks configuration for Aura-Sign MVP"
+
+# Global allowlist - patterns that should never trigger alerts
+[allowlist]
+description = "Global allowlist for false positives"
+paths = [
+    '''\.env\.example$''',
+    '''\.env\.example\..*$''',
+    '''README\.md$''',
+    '''CONTRIBUTING\.md$''',
+    '''docs/.*\.md$''',
+    '''^\.github/.*\.md$''',
+]
+
+# Allowlist for specific regex patterns that are safe
+regexes = [
+    '''placeholder''',
+    '''YOUR_.*_HERE''',
+    '''REPLACE_ME''',
+    '''CHANGE_ME''',
+    '''example\.com''',
+    '''localhost''',
+    '''127\.0\.0\.1''',
+    '''test@test\.com''',
+]
+
+# Allowlist for specific known safe values (documentation examples)
+stopwords = [
+    'replace_me_with_secure_random',
+    'long_random_password_here',
+    'your-secret-key-here',
+    'generate_a_secure_random_string_here',
+    'generate_a_long_random_password_at_least_32_chars',
+    'YOUR_SESSION_SECRET_HERE_MIN_32_CHARS',
+    'YOUR_IRON_SESSION_PASSWORD_HERE_MIN_32_CHARS',
+    'YOUR_DB_USER',
+    'YOUR_DB_PASSWORD',
+    'YOUR_MINIO_USER',
+    'YOUR_MINIO_PASSWORD',
+]
+
+# Custom rules for detecting secrets specific to this project
+
+[[rules]]
+id = "iron-session-password"
+description = "Detected potentially hardcoded Iron Session password"
+regex = '''(?i)(iron.?session.?(password|secret|key)|IRON_SESSION_(PASSWORD|SECRET))[\s]*[=:][\s]*["']?([^"'\s]{32,})["']?'''
+tags = ["iron-session", "session", "secret"]
+[[rules.allowlist]]
+regexes = [
+    '''YOUR_IRON_SESSION''',
+    '''replace_me''',
+    '''long_random_password''',
+    '''generate_a_''',
+    '''openssl rand''',
+]
+
+[[rules]]
+id = "session-secret"
+description = "Detected potentially hardcoded session secret"
+regex = '''(?i)(session.?(secret|key)|SESSION_SECRET)[\s]*[=:][\s]*["']?([^"'\s]{32,})["']?'''
+tags = ["session", "secret"]
+[[rules.allowlist]]
+regexes = [
+    '''YOUR_SESSION''',
+    '''replace_me''',
+    '''secure_random''',
+    '''generate_a_''',
+    '''openssl rand''',
+]
+
+[[rules]]
+id = "postgres-password"
+description = "Detected potentially hardcoded PostgreSQL password"
+regex = '''(?i)(postgres.?(password|pwd)|POSTGRES_PASSWORD|postgresql://[^:]+:)([^@\s"']{8,})'''
+tags = ["postgresql", "database", "password"]
+[[rules.allowlist]]
+regexes = [
+    '''postgresql://user:pass@''',
+    '''postgresql://YOUR_DB_USER:YOUR_DB_PASSWORD''',
+    '''YOUR_DB_PASSWORD''',
+    '''POSTGRES_PASSWORD\}\}''',
+    '''\$\{POSTGRES_PASSWORD''',
+    ''':?\?POSTGRES_PASSWORD''',
+]
+
+[[rules]]
+id = "minio-password"
+description = "Detected potentially hardcoded MinIO/S3 password"
+regex = '''(?i)(minio.?(password|secret|key)|MINIO_(ROOT_PASSWORD|SECRET_KEY|ACCESS_KEY))[\s]*[=:][\s]*["']?([^"'\s]{8,})["']?'''
+tags = ["minio", "s3", "object-storage", "password"]
+[[rules.allowlist]]
+regexes = [
+    '''YOUR_MINIO''',
+    '''MINIO_.*\}\}''',
+    '''\$\{MINIO_''',
+    ''':?\?MINIO_''',
+]
+
+[[rules]]
+id = "database-url-with-password"
+description = "Detected database URL with embedded password"
+regex = '''(?i)(database.?url|DATABASE_URL)[\s]*[=:][\s]*["']?(postgresql|mysql|mongodb)://[^:]+:([^@\s"']{8,})@'''
+tags = ["database", "url", "password"]
+[[rules.allowlist]]
+regexes = [
+    '''://user:pass@''',
+    '''://YOUR_DB_USER:YOUR_DB_PASSWORD@''',
+    '''://\$\{.*\}:''',
+]
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''(?i)api[_\-]?key[\s]*[=:][\s]*["']?([a-zA-Z0-9_\-]{32,})["']?'''
+tags = ["api", "key"]
+[[rules.allowlist]]
+regexes = [
+    '''YOUR_API_KEY''',
+    '''REPLACE_ME''',
+    '''api_key_here''',
+]
+
+[[rules]]
+id = "jwt-secret"
+description = "JWT secret or signing key"
+regex = '''(?i)jwt[_\-]?(secret|key)[\s]*[=:][\s]*["']?([a-zA-Z0-9_\-]{32,})["']?'''
+tags = ["jwt", "secret"]
+[[rules.allowlist]]
+regexes = [
+    '''YOUR_JWT''',
+    '''jwt_secret_here''',
+]
+
+[[rules]]
+id = "private-key"
+description = "Private key (PEM format)"
+regex = '''-----BEGIN[ A-Z]*PRIVATE KEY-----'''
+tags = ["private-key", "pem"]
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS Access Key ID"
+regex = '''(?i)(aws.?access.?key.?id|aws.?key)[\s]*[=:][\s]*["']?(AKIA[0-9A-Z]{16})["']?'''
+tags = ["aws", "access-key"]
+
+[[rules]]
+id = "aws-secret-key"
+description = "AWS Secret Access Key"
+regex = '''(?i)(aws.?secret.?access.?key|aws.?secret)[\s]*[=:][\s]*["']?([A-Za-z0-9/+=]{40})["']?'''
+tags = ["aws", "secret"]
+
+[[rules]]
+id = "github-token"
+description = "GitHub Personal Access Token or OAuth Token"
+regex = '''(?i)(github.?token|gh.?token|GITHUB_TOKEN)[\s]*[=:][\s]*["']?(ghp_[a-zA-Z0-9]{36,}|gho_[a-zA-Z0-9]{36,})["']?'''
+tags = ["github", "token"]
+[[rules.allowlist]]
+regexes = [
+    '''\$\{\{.*GITHUB_TOKEN.*\}\}''',
+    '''secrets\.GITHUB_TOKEN''',
+]
+
+[[rules]]
+id = "slack-webhook"
+description = "Slack Webhook URL"
+regex = '''https://hooks\.slack\.com/services/T[a-zA-Z0-9_]{8,}/B[a-zA-Z0-9_]{8,}/[a-zA-Z0-9_]{24,}'''
+tags = ["slack", "webhook"]
+
+[[rules]]
+id = "generic-password"
+description = "Generic password in configuration files"
+regex = '''(?i)password[\s]*[=:][\s]*["']([^"'\s]{8,})["']'''
+tags = ["password"]
+[[rules.allowlist]]
+regexes = [
+    '''password.*placeholder''',
+    '''password.*example''',
+    '''YOUR_.*PASSWORD''',
+    '''\$\{.*PASSWORD.*\}''',
+    ''':?\?.*PASSWORD''',
+]

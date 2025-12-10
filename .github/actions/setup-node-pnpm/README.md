@@ -19,12 +19,13 @@ Reusable GitHub Actions composite action that configures Node.js and pnpm with o
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  
+
   - name: Setup Node.js and pnpm
     uses: ./.github/actions/setup-node-pnpm
 ```
 
 This will:
+
 - Install Node.js 20
 - Install pnpm 8
 - Install dependencies with `pnpm install --frozen`
@@ -36,7 +37,7 @@ This will:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  
+
   - name: Setup with custom versions
     uses: ./.github/actions/setup-node-pnpm
     with:
@@ -51,12 +52,12 @@ Useful when you want to manually control dependency installation:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  
+
   - name: Setup without installing deps
     uses: ./.github/actions/setup-node-pnpm
     with:
       install-deps: 'false'
-  
+
   - name: Install specific dependencies
     run: pnpm install --filter my-package
 ```
@@ -66,7 +67,7 @@ steps:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  
+
   - name: Setup with custom registry
     uses: ./.github/actions/setup-node-pnpm
     with:
@@ -82,7 +83,7 @@ Useful for troubleshooting cache-related issues:
 ```yaml
 steps:
   - uses: actions/checkout@v4
-  
+
   - name: Setup without cache
     uses: ./.github/actions/setup-node-pnpm
     with:
@@ -91,13 +92,13 @@ steps:
 
 ## Inputs
 
-| Input | Description | Required | Default |
-|-------|-------------|----------|---------|
-| `node-version` | Node.js version to setup | No | `'20'` |
-| `pnpm-version` | pnpm version to setup | No | `'8'` |
-| `install-deps` | Install dependencies (pnpm install --frozen) | No | `'true'` |
-| `registry-url` | Optional registry url (for private registries) | No | `''` |
-| `cache` | Enable pnpm store caching (true or false) | No | `'true'` |
+| Input          | Description                                    | Required | Default  |
+| -------------- | ---------------------------------------------- | -------- | -------- |
+| `node-version` | Node.js version to setup                       | No       | `'20'`   |
+| `pnpm-version` | pnpm version to setup                          | No       | `'8'`    |
+| `install-deps` | Install dependencies (pnpm install --frozen)   | No       | `'true'` |
+| `registry-url` | Optional registry url (for private registries) | No       | `''`     |
+| `cache`        | Enable pnpm store caching (true or false)      | No       | `'true'` |
 
 ## What This Action Does
 
@@ -111,6 +112,7 @@ steps:
 ## Examples
 
 See [example-composite-action.yml](../../workflows/example-composite-action.yml) for complete usage examples including:
+
 - Default configuration
 - Custom versions
 - Skip installation
@@ -123,6 +125,7 @@ See [example-composite-action.yml](../../workflows/example-composite-action.yml)
 You can replace repetitive setup steps in your workflows:
 
 **Before:**
+
 ```yaml
 - name: Setup Node.js
   uses: actions/setup-node@v4
@@ -140,6 +143,7 @@ You can replace repetitive setup steps in your workflows:
 ```
 
 **After:**
+
 ```yaml
 - name: Setup Node.js and pnpm
   uses: ./.github/actions/setup-node-pnpm

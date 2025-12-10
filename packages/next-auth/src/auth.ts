@@ -10,7 +10,7 @@ export class AuraAuth {
 
   async getMessage(domain: string, address: string, chainId: number = 1): Promise<string> {
     const nonce = this.generateNonce();
-    
+
     const message = new SiweMessage({
       domain,
       address,
@@ -62,11 +62,7 @@ export class AuraAuth {
     }
   }
 
-  async updateSession(
-    session: AuraSession,
-    address: string,
-    chainId: number
-  ): Promise<void> {
+  async updateSession(session: AuraSession, address: string, chainId: number): Promise<void> {
     session.address = address;
     session.chainId = chainId;
     session.isAuthenticated = true;

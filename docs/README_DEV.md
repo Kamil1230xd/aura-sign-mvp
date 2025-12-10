@@ -24,17 +24,20 @@ This guide provides comprehensive instructions for developers working on the Aur
 Before you begin, ensure you have the following installed:
 
 - **Node.js**: Version 20.x or higher
+
   ```bash
   node --version  # Should be v20.x.x or higher
   ```
 
 - **pnpm**: Version 8.15.0 (project uses exact version)
+
   ```bash
   npm install -g pnpm@8.15.0
   pnpm --version  # Should be 8.15.0
   ```
 
 - **Git**: For version control
+
   ```bash
   git --version
   ```
@@ -48,6 +51,29 @@ Before you begin, ensure you have the following installed:
 ---
 
 ## Initial Setup
+
+### Option A: Automated Bootstrap (Recommended)
+
+Use the bootstrap script for a guided setup experience:
+
+```bash
+git clone https://github.com/Kamil1230xd/aura-sign-mvp.git
+cd aura-sign-mvp
+./scripts/bootstrap_local_dev.sh
+```
+
+This script will:
+
+- Check for pnpm installation
+- Backup existing `.env.local` if present
+- Auto-generate secure secrets and create `.env.local` with sane defaults
+- Start Docker services (PostgreSQL, Redis, MinIO) and wait for Postgres readiness
+- Install dependencies
+- Generate Prisma client
+- Run database migrations
+- Seed the database
+
+### Option B: Manual Setup
 
 ### 1. Clone the Repository
 
@@ -76,40 +102,33 @@ cp .env.example .env
 
 Edit `.env` and configure the required variables:
 
-```bash
-# Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/aura
+**DO NOT use example values from `.env.example` in production.** All placeholder values must be replaced with secure, randomly generated credentials.
 
-# SIWE Authentication
-NEXT_PUBLIC_APP_NAME=Aura-Sign-Demo
-SESSION_SECRET=generate_a_secure_random_string_here
-IRON_SESSION_PASSWORD=generate_a_long_random_password_at_least_32_chars
+See `.env.example` for the complete list of configuration options with detailed comments.
 
-# Storage (optional)
-MINIO_ENDPOINT=http://localhost:9000
-MINIO_ACCESS_KEY=minio
-MINIO_SECRET_KEY=minio123
-
-# Redis (optional)
-REDIS_URL=redis://localhost:6379
-
-# Embeddings API (optional)
-EMBEDDING_API=http://localhost:4001
-```
-
-**Security Note**: Never commit your `.env` file. The `.gitignore` is configured to exclude it.
+**Security Note**: Never commit your `.env` or `.env.local` files. The `.gitignore` is configured to exclude them.
 
 ### 4. Generate Secure Secrets
 
-For `SESSION_SECRET` and `IRON_SESSION_PASSWORD`, generate secure random strings:
+All secrets should be generated using cryptographically secure random generators:
 
 ```bash
-# Generate SESSION_SECRET (32 characters)
+# Generate strong random secrets (recommended method)
 openssl rand -base64 32
 
-# Generate IRON_SESSION_PASSWORD (32+ characters)
-openssl rand -base64 48
+# Example: Generate all required secrets at once
+echo "SESSION_SECRET=$(openssl rand -base64 32)"
+echo "IRON_SESSION_PASSWORD=$(openssl rand -base64 32)"
+echo "POSTGRES_PASSWORD=$(openssl rand -base64 32)"
+echo "MINIO_ROOT_PASSWORD=$(openssl rand -base64 32)"
 ```
+
+**Minimum secret requirements:**
+
+- `SESSION_SECRET`: 32+ characters (base64 encoded)
+- `IRON_SESSION_PASSWORD`: 32+ characters (base64 encoded)
+- Database passwords: 32+ characters for production
+- MinIO passwords: 8+ characters (32+ recommended for production)
 
 ---
 
@@ -178,15 +197,18 @@ The monorepo is organized into packages and apps:
 ### Packages (`/packages`)
 
 #### @aura-sign/client (`packages/client-ts`)
+
 - TypeScript client SDK for Aura-Sign operations
 - Core functionality for signature operations
 - Utilities for working with Ethereum wallets
 
 **Key Files**:
+
 - `src/index.ts` - Main entry point
 - `src/types.ts` - TypeScript type definitions
 
 **Development**:
+
 ```bash
 cd packages/client-ts
 pnpm dev          # Watch mode
@@ -195,15 +217,18 @@ pnpm type-check   # Type checking
 ```
 
 #### @aura-sign/next-auth (`packages/next-auth`)
+
 - SIWE (Sign-In with Ethereum) authentication handler
 - Iron-session integration for secure sessions
 - Session management utilities
 
 **Key Files**:
+
 - `src/index.ts` - Authentication handlers
 - `src/session.ts` - Session configuration
 
 **Development**:
+
 ```bash
 cd packages/next-auth
 pnpm dev
@@ -211,15 +236,18 @@ pnpm build
 ```
 
 #### @aura-sign/react (`packages/react`)
+
 - React components and hooks for Aura-Sign
 - UI components for wallet connection
 - Custom hooks for authentication state
 
 **Key Files**:
+
 - `src/components/` - React components
 - `src/hooks/` - Custom React hooks
 
 **Development**:
+
 ```bash
 cd packages/react
 pnpm dev
@@ -227,15 +255,18 @@ pnpm build
 ```
 
 #### @aura-sign/database-client (`packages/database-client`)
+
 - Database client for vector operations
 - Prisma schema and migrations
 - Vector similarity search utilities
 
 **Key Files**:
+
 - `schema_extra.prisma` - Vector support schema
 - `src/vector.ts` - Vector operations
 
 **Development**:
+
 ```bash
 cd packages/database-client
 pnpm build
@@ -243,14 +274,17 @@ npx prisma generate
 ```
 
 #### @aura-sign/trustmath (`packages/trustmath`)
+
 - Trust score calculations
 - Metrics and monitoring utilities
 - Prometheus metrics exposition
 
 **Key Files**:
+
 - `src/metrics.ts` - Metrics definitions
 
 **Development**:
+
 ```bash
 cd packages/trustmath
 pnpm dev
@@ -260,15 +294,18 @@ pnpm build
 ### Apps (`/apps`)
 
 #### demo-site (`apps/demo-site`)
+
 - Next.js demonstration application
 - Shows SIWE authentication flow
 - Example usage of all packages
 
 **Key Files**:
+
 - `pages/` - Next.js pages
 - `styles/` - Global styles with Tailwind CSS
 
 **Development**:
+
 ```bash
 cd apps/demo-site
 pnpm dev          # Starts on http://localhost:3001
@@ -277,11 +314,13 @@ pnpm start        # Production server
 ```
 
 #### web (`apps/web`)
+
 - Web application with operational tooling
 - E2E testing with Playwright
 - Vector similarity endpoint testing
 
 **Development**:
+
 ```bash
 cd apps/web
 pnpm dev
@@ -301,6 +340,7 @@ pnpm dev
 ```
 
 This starts:
+
 - All package builds in watch mode
 - Demo site on http://localhost:3001
 
@@ -311,6 +351,7 @@ pnpm demo
 ```
 
 This is an alias for:
+
 ```bash
 pnpm --filter demo-site dev
 ```
@@ -335,27 +376,32 @@ pnpm --filter demo-site start
 
 If your application uses PostgreSQL, MinIO, or Redis, you can run them via Docker Compose.
 
-Create a `docker-compose.yml` in the root:
+A `docker-compose.yml` exists in the root. It uses environment variables for credentials:
 
 ```yaml
 version: '3.8'
+
+# For local development, set these environment variables in .env or .env.local
+# Required variables:
+#   POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_DB
+#   MINIO_ROOT_USER, MINIO_ROOT_PASSWORD
 
 services:
   postgres:
     image: pgvector/pgvector:pg16
     environment:
-      POSTGRES_USER: aura_user
-      POSTGRES_PASSWORD: aura_pass
-      POSTGRES_DB: aura
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
+      POSTGRES_DB: ${POSTGRES_DB:-aura}
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis-data:/data
 
@@ -363,11 +409,11 @@ services:
     image: minio/minio:latest
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: minio123
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD must be set}
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     volumes:
       - minio-data:/data
 
@@ -503,12 +549,14 @@ pnpm add -D -w typescript
 ### Creating a New Package
 
 1. Create directory in `packages/`:
+
 ```bash
 mkdir packages/new-package
 cd packages/new-package
 ```
 
 2. Initialize package.json:
+
 ```json
 {
   "name": "@aura-sign/new-package",
@@ -525,6 +573,7 @@ cd packages/new-package
 ```
 
 3. Add tsconfig.json:
+
 ```json
 {
   "extends": "../../tsconfig.json",
@@ -551,16 +600,18 @@ python3 scripts/apply_license_headers.py
 Run the backup script:
 
 ```bash
-# Set environment variables
+# Set environment variables (use your actual credentials from .env.local)
 export PGHOST=localhost
 export PGPORT=5432
-export PGUSER=aura_user
-export PGPASSWORD=aura_pass
+export PGUSER=${POSTGRES_USER}        # From your .env.local
+export PGPASSWORD=${POSTGRES_PASSWORD} # From your .env.local
 export PGDATABASE=aura
 
 # Run backup
 ./scripts/db_backup.sh
 ```
+
+**Security Note:** Never hardcode credentials in scripts. Always source them from environment variables or secure secret management systems.
 
 For cloud backup (S3/GCS), see `docs/ops/quickstart_deploy.md`.
 
@@ -571,6 +622,7 @@ For cloud backup (S3/GCS), see `docs/ops/quickstart_deploy.md`.
 ### pnpm install fails
 
 **Solution**: Clear pnpm store and reinstall:
+
 ```bash
 pnpm store prune
 pnpm install
@@ -579,6 +631,7 @@ pnpm install
 ### Port already in use
 
 **Solution**: Find and kill the process using the port:
+
 ```bash
 # Find process on port 3001
 lsof -ti:3001
@@ -593,6 +646,7 @@ pnpm --filter demo-site dev -- -p 3002
 ### Build fails with type errors
 
 **Solution**: Ensure all dependencies are installed and type checking passes:
+
 ```bash
 pnpm install
 pnpm type-check
@@ -603,6 +657,7 @@ Check for circular dependencies between packages.
 ### Database connection fails
 
 **Solution**: Verify DATABASE_URL in .env and ensure PostgreSQL is running:
+
 ```bash
 # Check if PostgreSQL is running
 docker ps | grep postgres
@@ -614,6 +669,7 @@ psql $DATABASE_URL -c "SELECT 1"
 ### pgvector extension not found
 
 **Solution**: Install pgvector extension:
+
 ```bash
 # Using Docker with pgvector/pgvector image
 docker-compose up -d postgres
@@ -630,7 +686,8 @@ CREATE EXTENSION vector;
 
 ### Hot reload not working
 
-**Solution**: 
+**Solution**:
+
 1. Check if dev script is running with `--watch` flag
 2. Restart dev server
 3. Clear dist/ directory: `pnpm clean && pnpm dev`
@@ -638,6 +695,7 @@ CREATE EXTENSION vector;
 ### Workspace dependency not found
 
 **Solution**: Rebuild the dependency:
+
 ```bash
 # Build all packages
 pnpm build

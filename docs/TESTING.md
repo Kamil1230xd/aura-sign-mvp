@@ -5,6 +5,7 @@ This document describes the testing infrastructure and practices for the Aura-Si
 ## Overview
 
 The project uses a hybrid testing approach:
+
 - **Unit Tests**: Using Vitest for TypeScript packages
 - **E2E Tests**: Using Playwright for web applications
 
@@ -86,9 +87,9 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['dist', 'node_modules', '**/*.test.ts']
-    }
-  }
+      exclude: ['dist', 'node_modules', '**/*.test.ts'],
+    },
+  },
 });
 ```
 
@@ -107,6 +108,7 @@ apps/
 #### Configuration
 
 Playwright is configured in `apps/web/playwright.config.ts`:
+
 - Base URL: `http://localhost:3000` (configurable via `API_BASE_URL` env var)
 - Runs on Chromium by default
 - Retries failed tests 2 times on CI
@@ -135,9 +137,9 @@ import { test, expect } from '@playwright/test';
 
 test('should return valid response', async ({ request }) => {
   const response = await request.post('/api/endpoint', {
-    data: { key: 'value' }
+    data: { key: 'value' },
   });
-  
+
   expect(response.ok()).toBeTruthy();
   const data = await response.json();
   expect(data).toHaveProperty('result');
@@ -147,10 +149,12 @@ test('should return valid response', async ({ request }) => {
 ## Test Coverage
 
 Currently, the following packages have unit tests:
+
 - `@aura-sign/client` - 12 tests covering the API client
 - `@aura-sign/react` - 7 tests covering type definitions
 
 The following packages are planned for testing:
+
 - `@aura-sign/next-auth` - Authentication handlers
 - `@aura-sign/trustmath` - Trust calculation logic
 - `@aura-sign/database-client` - Database operations
@@ -158,6 +162,7 @@ The following packages are planned for testing:
 ## CI/CD Integration
 
 Tests are automatically run in CI/CD pipelines:
+
 - All unit tests run on every commit
 - E2E tests run on pull requests (requires running server)
 - Failed tests block merging
@@ -210,6 +215,7 @@ pnpx playwright install
 ## Adding Tests to New Packages
 
 1. Add test script to `package.json`:
+
 ```json
 {
   "scripts": {
@@ -220,6 +226,7 @@ pnpx playwright install
 ```
 
 2. Add vitest as a dev dependency:
+
 ```bash
 pnpm add -D --filter <package-name> vitest
 ```

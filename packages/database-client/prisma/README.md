@@ -57,10 +57,16 @@ pnpm prisma:seed
 
 ## Database URL
 
-Set the `DATABASE_URL` environment variable in `.env`:
+Set the `DATABASE_URL` environment variable in `.env.local` (gitignored):
 
-```
-DATABASE_URL=postgresql://aura_user:aura_pass@localhost:5432/aura
+```bash
+# Format: postgresql://username:password@host:port/database
+DATABASE_URL=postgresql://YOUR_DB_USER:YOUR_DB_PASSWORD@localhost:5432/aura
 ```
 
-The credentials above match the docker-compose.yml configuration.
+**Security Note:**
+
+- Never commit real credentials to version control
+- Use strong, randomly generated passwords (generate with `openssl rand -base64 32`)
+- The `docker-compose.yml` reads credentials from environment variables
+- Use the bootstrap script (`./scripts/bootstrap_local_dev.sh`) to auto-generate secure credentials

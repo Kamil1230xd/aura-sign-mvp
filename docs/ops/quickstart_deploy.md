@@ -28,12 +28,12 @@ For optimal vector search performance, you should create HNSW (Hierarchical Navi
 ALTER DATABASE your_database SET hnsw.ef_search = 100;
 
 -- Create HNSW index on identity table
-CREATE INDEX IF NOT EXISTS identity_ai_embedding_idx 
+CREATE INDEX IF NOT EXISTS identity_ai_embedding_idx
 ON identity USING hnsw (ai_embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 64);
 
--- Create HNSW index on trust_event table  
-CREATE INDEX IF NOT EXISTS trust_event_ai_embedding_idx 
+-- Create HNSW index on trust_event table
+CREATE INDEX IF NOT EXISTS trust_event_ai_embedding_idx
 ON trust_event USING hnsw (ai_embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 64);
 ```
@@ -41,7 +41,7 @@ WITH (m = 16, ef_construction = 64);
 **Note**: If HNSW is not available in your pgvector version, you can use IVFFlat instead:
 
 ```sql
-CREATE INDEX IF NOT EXISTS identity_ai_embedding_idx 
+CREATE INDEX IF NOT EXISTS identity_ai_embedding_idx
 ON identity USING ivfflat (ai_embedding vector_cosine_ops)
 WITH (lists = 100);
 ```
@@ -59,7 +59,7 @@ model identity {
   ai_embedding  Unsupported("vector(1536)")?
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
-  
+
   @@index([ai_embedding], type: Ivfflat)
 }
 
@@ -71,7 +71,7 @@ model trust_event {
   ai_embedding  Unsupported("vector(1536)")?
   event_type    String
   created_at    DateTime @default(now())
-  
+
   @@index([from_address])
   @@index([to_address])
   @@index([ai_embedding], type: Ivfflat)
@@ -94,22 +94,22 @@ npx prisma migrate dev --name add_vector_support
 ### Import and Use Vector Functions
 
 ```typescript
-import { 
-  findSimilarIdentities, 
+import {
+  findSimilarIdentities,
   upsertIdentityEmbedding,
-  validateEmbedding 
+  validateEmbedding,
 } from '@aura-sign/database-client/dist/vector';
 
 // Store an embedding for an identity
 await upsertIdentityEmbedding(
-  '0x1234...', 
+  '0x1234...',
   embeddingArray // Array of 1536 numbers
 );
 
 // Find similar identities
 const similar = await findSimilarIdentities(
-  queryEmbedding,  // Array of 1536 numbers
-  10               // Return top 10 results
+  queryEmbedding, // Array of 1536 numbers
+  10 // Return top 10 results
 );
 
 // Results format:
@@ -121,6 +121,7 @@ const similar = await findSimilarIdentities(
 ```
 
 **Important Notes**:
+
 - The vector helper uses Prisma's `$queryRawUnsafe` to access pgvector's `<->` (cosine distance) operator
 - Embedding validation is performed automatically
 - Ensure pgvector extension is installed before using these functions
@@ -158,7 +159,7 @@ const server = http.createServer(async (req, res) => {
 import {
   trustmathRunsTotal,
   trustmathRunDuration,
-  vectorSearchLatency
+  vectorSearchLatency,
 } from '@aura-sign/trustmath/dist/metrics';
 
 // Track trustmath runs
@@ -173,10 +174,13 @@ end();
 const start = Date.now();
 const results = await findSimilarIdentities(embedding, 10);
 const duration = (Date.now() - start) / 1000;
-vectorSearchLatency.observe({ 
-  operation: 'similarity', 
-  status: 'success' 
-}, duration);
+vectorSearchLatency.observe(
+  {
+    operation: 'similarity',
+    status: 'success',
+  },
+  duration
+);
 ```
 
 ## 5. Prometheus Configuration
@@ -192,7 +196,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     ports:
-      - "9090:9090"
+      - '9090:9090'
     volumes:
       - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./infra/prometheus/alert.rules.yml:/etc/prometheus/alert.rules.yml
@@ -220,7 +224,7 @@ scrape_configs:
   - job_name: 'aura_api'
     static_configs:
       - targets: ['your-api-host:3000']
-  
+
   - job_name: 'trustmath_worker'
     static_configs:
       - targets: ['your-worker-host:3001']
@@ -315,6 +319,7 @@ npx playwright show-report
 ### View Metrics
 
 Access these URLs to view metrics:
+
 - API metrics: http://your-api-host:3000/metrics
 - Worker metrics: http://your-worker-host:3001/metrics
 - Prometheus UI: http://localhost:9090
@@ -322,6 +327,7 @@ Access these URLs to view metrics:
 ### Check Alert Rules
 
 In Prometheus UI:
+
 1. Go to "Alerts" tab
 2. View configured alerts from `alert.rules.yml`:
    - HighVectorSearchLatency
@@ -355,6 +361,7 @@ CREATE EXTENSION vector;
 ### Metrics Endpoint Returns 404
 
 Ensure:
+
 1. The metrics handler is properly registered in your server
 2. The server is listening on the correct port
 3. Prometheus can reach the endpoint (check firewall rules)

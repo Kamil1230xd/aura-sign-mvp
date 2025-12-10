@@ -26,7 +26,7 @@ export const trustmathRunsTotal = new Counter({
   name: 'trustmath_runs_total',
   help: 'Total number of trustmath calculation runs',
   labelNames: ['status', 'type'],
-  registers: [register]
+  registers: [register],
 });
 
 /**
@@ -39,7 +39,7 @@ export const trustmathRunDuration = new Histogram({
   help: 'Duration of trustmath calculation runs in seconds',
   labelNames: ['type'],
   buckets: [0.1, 0.5, 1, 2, 5, 10, 30, 60],
-  registers: [register]
+  registers: [register],
 });
 
 /**
@@ -52,21 +52,21 @@ export const vectorSearchLatency = new Histogram({
   help: 'Latency of vector similarity search operations in seconds',
   labelNames: ['operation', 'status'],
   buckets: [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
-  registers: [register]
+  registers: [register],
 });
 
 /**
  * HTTP handler for metrics endpoint
  * Returns Prometheus-formatted metrics
- * 
+ *
  * Usage with Express:
  *   app.get('/metrics', metricsHandler);
- * 
+ *
  * Usage with native HTTP:
  *   if (req.url === '/metrics') {
  *     return metricsHandler(req, res);
  *   }
- * 
+ *
  * @param req - HTTP request object
  * @param res - HTTP response object
  */
@@ -83,15 +83,15 @@ export async function metricsHandler(req: any, res: any): Promise<void> {
 
 /**
  * Example usage of metrics:
- * 
+ *
  * // Increment counter
  * trustmathRunsTotal.inc({ status: 'success', type: 'reputation' });
- * 
+ *
  * // Track duration with timer
  * const end = trustmathRunDuration.startTimer({ type: 'reputation' });
  * // ... perform calculation ...
  * end();
- * 
+ *
  * // Track duration manually
  * const start = Date.now();
  * // ... perform vector search ...

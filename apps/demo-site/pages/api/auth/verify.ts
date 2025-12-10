@@ -6,10 +6,7 @@ interface VerifyRequest {
   signature: string;
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -18,8 +15,8 @@ export default async function handler(
     const { message, signature } = req.body as VerifyRequest;
 
     if (!message || !signature) {
-      return res.status(400).json({ 
-        error: 'Message and signature are required' 
+      return res.status(400).json({
+        error: 'Message and signature are required',
       });
     }
 
@@ -37,8 +34,8 @@ export default async function handler(
       secret: process.env.IRON_SESSION_SECRET || 'default-secret-change-me',
     };
 
-    const session = await getSession(req as any, res as any, config);
-    
+    const session = await getSession(req, res, config);
+
     // Update session with authentication
     await auraAuth.updateSession(session, result.address!, result.chainId!);
 
@@ -52,9 +49,9 @@ export default async function handler(
     });
   } catch (error) {
     console.error('Verification error:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Verification failed' 
+    res.status(500).json({
+      success: false,
+      error: 'Verification failed',
     });
   }
 }
