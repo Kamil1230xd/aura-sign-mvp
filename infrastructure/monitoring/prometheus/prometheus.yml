@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 5s # Wysoka częstotliwość dla testów dev
+
+scrape_configs:
+  - job_name: 'trustmath-engine'
+    static_configs:
+      - targets: ['trustmath-worker:9090']
+    metrics_path: /metrics
+
+  - job_name: 'aura-api'
+    static_configs:
+      - targets: ['api-gateway:3000']
+    metrics_path: /metrics
+
+  - job_name: 'postgres-vector'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
