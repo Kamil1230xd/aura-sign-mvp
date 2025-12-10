@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "signing": {
+    "required": true,
+    "algorithm": "RSA",
+    "keySize": 4096,
+    "hashAlgorithm": "SHA256"
+  },
+  "verification": {
+    "enabled": true,
+    "strictMode": true,
+    "allowedSigners": [
+      "trusted-signer@example.com"
+    ]
+  },
+  "automation": {
+    "autoSign": true,
+    "signOnCommit": true,
+    "signOnMerge": true
+  },
+  "notifications": {
+    "onFailure": true,
+    "onSuccess": false
+  }
+}
