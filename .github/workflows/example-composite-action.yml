@@ -14,7 +14,7 @@ jobs:
   example-defaults:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup with defaults
         uses: ./.github/actions/setup-node-pnpm
@@ -29,7 +29,7 @@ jobs:
   example-custom-versions:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup with custom versions
         uses: ./.github/actions/setup-node-pnpm
@@ -46,7 +46,7 @@ jobs:
   example-no-install:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup without installing deps
         uses: ./.github/actions/setup-node-pnpm
@@ -60,7 +60,7 @@ jobs:
   example-custom-registry:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup with custom registry
         uses: ./.github/actions/setup-node-pnpm
@@ -76,7 +76,7 @@ jobs:
   example-no-cache:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup without cache
         uses: ./.github/actions/setup-node-pnpm
@@ -93,7 +93,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Node and pnpm
         uses: ./.github/actions/setup-node-pnpm
