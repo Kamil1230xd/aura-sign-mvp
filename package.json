@@ -20,12 +20,12 @@
     "test:unit": "pnpm -r --filter './packages/*' test"
   },
   "devDependencies": {
-    "@types/node": "^20.19.26",
-    "@vitest/ui": "^4.0.15",
+    "@types/node": "^20.19.27",
+    "@vitest/ui": "^4.0.16",
     "prettier": "^3.7.4",
     "turbo": "^1.11.0",
     "typescript": "^5.3.0",
-    "vitest": "^4.0.15"
+    "vitest": "^4.0.16"
   },
   "packageManager": "pnpm@8.15.0"
 }
