@@ -1,0 +1,15 @@
+[Unit]
+Description=AURA-IDTOKEN bootstrap script
+After=network.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/your-repo
+ExecStart=/usr/bin/env bash %h/your-repo/scripts/bootstrap-aura-idtoken.sh
+RemainAfterExit=yes
+User=%u
+Environment=COMPOSE_FILE=%h/your-repo/docker-compose.yml
+
+[Install]
+WantedBy=multi-user.target
