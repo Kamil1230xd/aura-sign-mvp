@@ -1,0 +1,27 @@
+# Aura-IDToken LLM Configuration
+User-agent: *
+Disallow:
+
+# Project Context
+Name: Aura-IDToken
+Type: Decentralized Identity Protocol (DID)
+Network: Aura Network (Cosmos SDK Layer 1)
+Consensus: Tendermint BFT
+Privacy: Zero-Knowledge Proofs (ZKP), Behavioral Biometrics
+
+# Core Concepts
+- Sybil Resistance: Implements Eigen Trust algorithm for reputation scoring.
+- Verification: Supports W3C Verifiable Credentials (VCs).
+- Interoperability: IBC-enabled for cross-chain identity.
+- Philosophy: Computable Trust & Digital Stoicism.
+
+# Key Resources
+Documentation: https://docs.aura-idtoken.network
+Whitepaper: https://aura-idtoken.network/whitepaper.pdf
+Source Code: https://github.com/Kamil1230xd/aura-sign-mvp
+Explorer: https://aurascan.io
+
+# Technical Architecture
+- Core Engine: TrustMath (BSL 1.1)
+- SDKs: TypeScript/React (MIT)
+- Protection: Aura Protection Suite v1.0
