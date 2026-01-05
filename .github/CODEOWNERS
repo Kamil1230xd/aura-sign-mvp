@@ -1,0 +1,26 @@
+# CODEOWNERS file for aura-sign-mvp
+# These owners will be the default owners for everything in the repo
+# Unless a later match takes precedence, these owners will be requested for
+# review when someone opens a pull request.
+
+# Global owners
+* @Kamil1230xd
+
+# AURA Protection Suite
+/.aura-protection-suite/ @Kamil1230xd
+
+# GitHub configuration
+/.github/ @Kamil1230xd
+
+# Core packages
+/packages/next-auth/ @Kamil1230xd
+/packages/client-ts/ @Kamil1230xd
+/packages/react/ @Kamil1230xd
+
+# Applications
+/apps/demo-site/ @Kamil1230xd
+
+# Configuration files
+/*.json @Kamil1230xd
+/*.yml @Kamil1230xd
+/*.yaml @Kamil1230xd
