@@ -16,7 +16,7 @@ groups:
           severity: warning
           component: vector_search
         annotations:
-          summary: "High vector search latency detected"
+          summary: 'High vector search latency detected'
           description: |
             Vector search P95 latency is {{ $value | humanizeDuration }} 
             which exceeds the 2 second threshold.
@@ -34,7 +34,7 @@ groups:
           severity: critical
           component: vector_search
         annotations:
-          summary: "Critical vector search latency detected"
+          summary: 'Critical vector search latency detected'
           description: |
             Vector search P95 latency is {{ $value | humanizeDuration }}
             which exceeds the 5 second critical threshold.
@@ -53,7 +53,7 @@ groups:
           severity: warning
           component: trustmath
         annotations:
-          summary: "High trustmath calculation duration"
+          summary: 'High trustmath calculation duration'
           description: |
             Trustmath run P95 duration is {{ $value | humanizeDuration }}
             which exceeds the 10 second threshold.
@@ -71,7 +71,7 @@ groups:
           severity: critical
           component: trustmath
         annotations:
-          summary: "Critical trustmath calculation duration"
+          summary: 'Critical trustmath calculation duration'
           description: |
             Trustmath run P95 duration is {{ $value | humanizeDuration }}
             which exceeds the 30 second critical threshold.
@@ -90,7 +90,7 @@ groups:
           severity: warning
           component: trustmath
         annotations:
-          summary: "High error rate in trustmath calculations"
+          summary: 'High error rate in trustmath calculations'
           description: |
             Trustmath error rate is {{ $value | humanizePercentage }}
             which exceeds 5% threshold.
@@ -103,7 +103,7 @@ groups:
         labels:
           severity: critical
         annotations:
-          summary: "Service {{ $labels.job }} is down"
+          summary: 'Service {{ $labels.job }} is down'
           description: |
             Service {{ $labels.job }} on {{ $labels.instance }} 
             has been down for more than 1 minute.
@@ -116,7 +116,7 @@ groups:
         labels:
           severity: warning
         annotations:
-          summary: "High memory usage detected"
+          summary: 'High memory usage detected'
           description: |
             Memory usage is {{ $value }}% on {{ $labels.instance }}
             which exceeds 90% threshold.

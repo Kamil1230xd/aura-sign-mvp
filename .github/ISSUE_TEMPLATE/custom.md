@@ -4,7 +4,6 @@ about: Report a documentation issue or suggest documentation improvements
 title: ''
 labels: documentation, good first issue, help wanted
 assignees: Kamil1230xd
-
 ---
 
 **What documentation needs improvement?**
@@ -18,5 +17,3 @@ Describe what should be added, changed, or clarified.
 
 **Additional context**
 Add any other relevant information (screenshots, examples, etc.).
-
-

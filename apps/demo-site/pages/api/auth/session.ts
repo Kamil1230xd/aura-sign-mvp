@@ -1,10 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from '@aura-sign/next-auth';
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -14,7 +11,7 @@ export default async function handler(
       secret: process.env.IRON_SESSION_SECRET || 'default-secret-change-me',
     };
 
-    const session = await getSession(req as any, res as any, config);
+    const session = await getSession(req, res, config);
 
     res.status(200).json({
       address: session.address || '',
