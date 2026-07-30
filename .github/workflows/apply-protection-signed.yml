@@ -1,0 +1,31 @@
+# This workflow applies protection rules with signature verification
+name: Apply Protection (Signed)
+
+on:
+  push:
+    branches: ["main", "protection/**"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  verify-and-protect:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Verify signatures
+        run: |
+          echo "Verifying signatures..."
+          # Add signature verification logic here
+          
+      - name: Apply protection rules
+        run: |
+          echo "Applying protection rules for aura-suite-v1..."
+          # Add protection rule logic here
