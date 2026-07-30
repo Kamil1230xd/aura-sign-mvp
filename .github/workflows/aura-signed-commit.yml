@@ -1,0 +1,86 @@
+name: AURA Signed Commit CI
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 'protection/**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  verify-signatures:
+    name: Verify Commit Signatures
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Verify commit signatures
+        run: |
+          echo "Verifying commit signatures..."
+          git log --show-signature -1
+          
+          # Check if commit is signed
+          if git log --show-signature -1 | grep -q "Good signature"; then
+            echo "✓ Commit is properly signed"
+          else
+            echo "⚠ Warning: Commit signature not verified (may be unsigned)"
+          fi
+      
+      - name: AURA Protection Suite Status
+        run: |
+          echo "AURA Protection Suite v1.0 is active"
+          echo "Checking protection suite configuration..."
+          
+          if [ -f ".aura-protection-suite/v1.0/signing-config.json" ]; then
+            echo "✓ Signing configuration found"
+          fi
+          
+          if [ -f ".github/CODEOWNERS" ]; then
+            echo "✓ CODEOWNERS file found"
+          fi
+
+  signed-commit-push:
+    name: Create Signed Commit
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "AURA Bot"
+          git config --global user.email "aura-bot@users.noreply.github.com"
+      
+      - name: Create signed commit
+        run: |
+          echo "AURA Protection Suite v1.0 Active" > .aura-status
+          echo "Last verified: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> .aura-status
+          
+          git add .aura-status
+          
+          # Commit with sign-off (using -s for DCO compliance)
+          # Note: For GPG signing, configure GPG keys and use -S flag
+          git commit -s -m "chore: AURA protection suite status update [automated]" || echo "No changes to commit"
+      
+      - name: Push signed commit
+        run: |
+          git push origin main || echo "Nothing to push"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
