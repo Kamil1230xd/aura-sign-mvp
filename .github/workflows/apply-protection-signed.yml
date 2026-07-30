@@ -1,0 +1,70 @@
+name: Apply AURA Protection Suite (signed commit + PR)
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  apply_protection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure tools
+        run: sudo apt-get update && sudo apt-get install -y unzip gnupg2 rsync
+
+      - name: Import GPG private key
+        env:
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        run: |
+          set -e
+          mkdir -p ~/.gnupg
+          chmod 700 ~/.gnupg
+          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          KEYID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
+          if [ -z "$KEYID" ]; then echo "GPG import failed"; gpg --list-secret-keys; exit 1; fi
+          echo "Imported GPG KEYID: $KEYID"
+          echo "$KEYID" > /tmp/GPG_KEYID
+
+      - name: Configure git to sign commits
+        run: |
+          KEYID=$(cat /tmp/GPG_KEYID)
+          git config user.name "aura-bot"
+          git config user.email "dev@aura-idtoken.org"
+          git config user.signingkey "$KEYID"
+          git config commit.gpgsign true
+
+      - name: Extract protection package
+        run: |
+          if [ ! -f ./aura_protection_suite_v2.zip ]; then echo "ZIP not found in repo root"; ls -la; exit 1; fi
+          rm -rf PROTECTION_TMP || true
+          mkdir -p PROTECTION_TMP
+          unzip -oq aura_protection_suite_v2.zip -d PROTECTION_TMP
+          rsync -a PROTECTION_TMP/ PROTECTION/
+
+      - name: Create branch, commit (signed) and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          BRANCH="protection/aura-suite-v1-$(date -u +%Y%m%dT%H%M%SZ)"
+          git checkout -b "$BRANCH"
+          git add PROTECTION/ .github/PULL_REQUEST_TEMPLATE.md || true
+          git commit -m "chore: add AURA Protection Suite v1.0 (signed commit)" || echo "no changes to commit"
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+          git push -u origin "$BRANCH"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "chore: add AURA Protection Suite v1.0 (signed)"
+          body: |
+            This PR adds the AURA Protection Suite v1.0 — composite license set, protocol spec (AIDS1), defensive architecture and watermarking spec.
+            Please review licensing with legal counsel before merge.
+          base: main
