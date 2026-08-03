@@ -9,7 +9,7 @@
     "test:e2e:report": "playwright show-report"
   },
   "devDependencies": {
-    "@playwright/test": "^1.40.0",
-    "@types/node": "^20.19.26"
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^20.19.43"
   }
 }
